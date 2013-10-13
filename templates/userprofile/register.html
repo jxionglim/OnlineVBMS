@@ -1,0 +1,6 @@
+{% block content %}
+{% for fields in form %}
+{{ fields.label }}: {{ fields }}
+<br>
+{% endfor %}
+{% endblock %}
