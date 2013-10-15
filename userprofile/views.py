@@ -2,7 +2,7 @@ from django.db import connection, transaction
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from userprofile.models import RegisterForm, Customer
+from userprofile.models import RegisterForm, LoginForm
 
 
 def register(request):
@@ -38,7 +38,23 @@ def register(request):
     }, context_instance=RequestContext(request))
 
 
-def viewProfile(request):
-    return render_to_response('userprofile/register.html', {
-        'form' : RegisterForm(),
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cursor = connection.cursor()
+            query = "SELECT count(*) FROM customer WHERE email=%s AND password=%s"
+            params = [
+                request.POST['email'],
+                request.POST['password'],
+            ]
+            cursor.execute(query, params)
+            row = cursor.fetchone()
+            if row[0] == 1:
+                return HttpResponseRedirect('/home')
+    else:
+        form = LoginForm()
+
+    return render_to_response('userprofile/login.html', {
+        'form' : form,
         },context_instance=RequestContext(request))
