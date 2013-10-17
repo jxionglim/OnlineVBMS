@@ -6,5 +6,6 @@ urlpatterns = patterns('',
     (r'^register$', 'userprofile.views.register'),
     (r'^customer/', include('customer.urls')),
     (r'^user/', include('userprofile.urls')),
+    (r'^admin/', include('admin.urls')),
     )
 
