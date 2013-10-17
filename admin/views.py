@@ -44,8 +44,9 @@ def register(request):
             cursor.execute(query, params)
             transaction.commit_unless_managed()
 
-            """query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            params = [
+            query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            print(request.POST['select'])
+            """params = [
                 request.POST['carplateNo'],
                 request.POST['iuNo'],
                 request.POST['manufacturer'],
