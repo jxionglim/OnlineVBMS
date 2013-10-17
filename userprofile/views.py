@@ -1,20 +1,21 @@
-from django.db import connection, transaction
+import dbaccess
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from userprofile.models import RegisterForm, LoginForm
+from django.contrib.auth.models import User
+from django.contrib.auth import logout as auth_logout
 
 
 def register(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            cursor = connection.cursor()
-            query = 'SELECT MAX(cusId) FROM customer'
-            cursor.execute(query)
-            row = cursor.fetchone()
-            cusId = row[0]+1 if row[0] is not None else 1
-            query = "INSERT INTO customer VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            user = User.objects.create_user(request.POST['email'], None, request.POST['passwd'])
+            user.save()
+            cusId = dbaccess.getMaxCustomerId()+1
             params = [
                 cusId,
                 request.POST['firstName'],
@@ -25,10 +26,10 @@ def register(request):
                 request.POST['streetName'],
                 request.POST['cExpDate'],
                 request.POST['cSerialNo'],
-                request.POST['password']
+                request.POST['passwd'],
+                user.id
             ]
-            cursor.execute(query, params)
-            transaction.commit_unless_managed()
+            dbaccess.insertCustomer(params)
             return HttpResponseRedirect('/register')
     else:
         form = RegisterForm()
@@ -39,22 +40,31 @@ def register(request):
 
 
 def login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, request.POST)
         if form.is_valid():
-            cursor = connection.cursor()
-            query = "SELECT count(*) FROM customer WHERE email=%s AND password=%s"
-            params = [
-                request.POST['email'],
-                request.POST['password'],
-            ]
-            cursor.execute(query, params)
-            row = cursor.fetchone()
-            if row[0] == 1:
-                return HttpResponseRedirect('/home')
+            return HttpResponseRedirect('/home')
     else:
-        form = LoginForm()
+        form = LoginForm(request)
 
     return render_to_response('userprofile/login.html', {
-        'form' : form,
-        },context_instance=RequestContext(request))
+        'form': form,
+        }, context_instance=RequestContext(request))
+
+
+def viewProfile(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+    return render_to_response('userprofile/viewProfile.html', {
+        'form': 'asd',
+        }, context_instance=RequestContext(request))
+
+
+def logout(request):
+    if request.user.is_authenticated():
+        auth_logout(request)
+        return HttpResponseRedirect('/')
+    else:
+        return HttpResponseRedirect('/login')

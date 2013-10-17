@@ -1,7 +1,10 @@
 import re
+import dbaccess
 from django import forms
 from django.db import models
 from django.forms import ModelForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 
 def validateBlank(value):
@@ -13,7 +16,7 @@ def validateBlank(value):
 class Customer(models.Model):
     cusId = models.BigIntegerField()
     email = models.EmailField(max_length=256)
-    password = models.CharField(max_length=256)
+    passwd = models.CharField(max_length=256)
     firstName = models.CharField(max_length=256)
     lastName = models.CharField(max_length=256)
     contactNo = models.BigIntegerField()
@@ -21,14 +24,14 @@ class Customer(models.Model):
     zipcode = models.BigIntegerField()
     cSerialNo = models.BigIntegerField()
     cExpDate = models.CharField(max_length=5)
+    user = models.OneToOneField(User)
 
     class Meta:
         managed = False
 
-
 class RegisterForm(ModelForm):
     email = forms.EmailField(max_length=256, label="Email")
-    password = forms.CharField(widget=forms.PasswordInput(), max_length=256, label="Password", min_length=8)
+    passwd = forms.CharField(widget=forms.PasswordInput(), max_length=256, label="Password", min_length=8)
     firstName = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
     lastName = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
     contactNo = forms.IntegerField(label="Contact Number")
@@ -39,7 +42,7 @@ class RegisterForm(ModelForm):
 
     class Meta:
         model = Customer
-        exclude = ['cusId']
+        exclude = ('user', 'cusId')
 
     def clean_cExpDate(self):
         cExpDate = self.cleaned_data.get('cExpDate', '')
@@ -65,4 +68,20 @@ class LoginForm(forms.Form):
     email = forms.EmailField(max_length=256, label="Email")
     password = forms.CharField(max_length=256, widget=forms.PasswordInput, label="Password", min_length=8)
 
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(LoginForm, self).__init__(*args, **kwargs)
 
+    def clean(self):
+        cleaned_data = super(LoginForm, self).clean()
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email and password:
+            valid = dbaccess.validateCustomer([email, password])
+            if valid:
+                user = authenticate(username=email, password=password)
+                login(self.request, user)
+            else:
+                raise forms.ValidationError("Invalid credientials")
+        return cleaned_data
