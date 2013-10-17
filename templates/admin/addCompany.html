@@ -1,0 +1,13 @@
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+<h3>Company Details</h3>
+{{ cform.as_p }}
+<br>
+<h3>Driver Details</h3>
+{{ dform.as_p }}
+<br>
+<h3>Vehicle Details</h3>
+{{ vform.as_p }}
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}
