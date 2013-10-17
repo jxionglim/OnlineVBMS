@@ -1,9 +1,12 @@
+import re
+from django import forms
 from django.db import models
+from django.forms import ModelForm
 
 
 # Create your models here.
 class Job(models.Model):
-    cusId = models.IntegerField()
+    cusId = models.BigIntegerField()
     coyId = models.IntegerField()
     jobId = models.IntegerField()
     dateCreated = models.DateField()
@@ -38,3 +41,25 @@ class reqResources(models.Model):
 
     class Meta:
         managed = False
+
+
+class JobForm(ModelForm):
+    coyId = forms.IntegerField(label="Company")
+    amount = forms.DecimalField(label="Amount")
+    paidStatus = forms.CharField(label="Paid Status",max_length=1, min_length=1)
+
+    class Meta:
+        model = Job
+        exclude = ['cusId','jobId','dateCreated']
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount', '')
+        if amount <= 0:
+            raise forms.ValidationError("Enter a valid payment amount")
+        return amount
+
+    def clean_paidStatus(self):
+        paidStatus = self.cleaned_data.get('paidStatus', '')
+        if paidStatus != 'N' and paidStatus != 'Y':
+            raise forms.ValidationError("Enter a valid paid status")
+        return paidStatus
