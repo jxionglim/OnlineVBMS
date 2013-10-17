@@ -4,4 +4,5 @@ urlpatterns = patterns('',
     (r'^$', 'userprofile.views.login'),
 	(r'^register$', 'userprofile.views.register'),
 	(r'^user/', include('userprofile.urls')),
+    (r'^admin/', include('admin.urls')),
 )
