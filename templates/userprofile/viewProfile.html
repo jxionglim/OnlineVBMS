@@ -1,6 +1,15 @@
 {% block content %}
-<form action="" method="post">{% csrf_token %}
-{{ form }}
-<input type="submit" value="Submit" />
+{% for key, values in custInfo %}
+    {{ key }}: {% if values != None %} {{ values }} {% else %} - {% endif %}
+    <br>
+{% endfor %}
+    <br>
+{% for key, values in custCredit %}
+{{ key }}: {{ values }}
+<br>
+{% endfor %}
+<br>
+<form action="/user/edit">
+<input type="submit" value="Edit">
 </form>
 {% endblock %}
