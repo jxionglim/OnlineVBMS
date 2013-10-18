@@ -2,6 +2,7 @@ from django.db import connection, transaction
 
 cursor = connection.cursor()
 
+
 def getMaxCustomerId():
     query = 'SELECT MAX(cusId) FROM customer'
     cursor.execute(query)

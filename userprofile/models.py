@@ -83,5 +83,9 @@ class LoginForm(forms.Form):
                 user = authenticate(username=email, password=password)
                 login(self.request, user)
             else:
-                raise forms.ValidationError("Invalid credientials")
+                user = authenticate(username=email, password=password)
+                if user is not None:
+                    login(self.request, user)
+                else:
+                    raise forms.ValidationError("Invalid credientials")
         return cleaned_data
