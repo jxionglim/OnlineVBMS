@@ -21,23 +21,28 @@ class Company(models.Model):
     class Meta:
         managed = False
 
+
 class Driver(models.Model):
     coyId = models.IntegerField()
     driverId = models.IntegerField()
     firstName = models.CharField(max_length=256)
     lastName = models.CharField(max_length=256)
-    driverClass = models.CharField(max_length=2)
+    drivingClass = models.CharField(max_length=2)
     driverContactNo = models.BigIntegerField()
 
     class Meta:
         managed = False
 
 class Vehicle(models.Model):
-    coyId = models.IntegerField()
     carplateNo = models.CharField(max_length=8)
-    transType = models.CharField(max_length=6)
-    driverClass = models.CharField(max_length=2)
+    iuNo = models.IntegerField()
+    manufacturer = models.CharField(max_length=256)
+    model = models.CharField(max_length=256)
     capacity = models.IntegerField()
+    drivingClass = models.CharField(max_length=2)
+    transType = models.CharField(max_length=6)
+    vehType = models.CharField(max_length=1)
+    coyId = models.IntegerField()
 
     class Meta:
         managed = False
@@ -97,7 +102,7 @@ class AddCompanyForm(ModelForm):
 class AddDriverForm(ModelForm):
     firstName = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
     lastName = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
-    driverClass = forms.CharField(max_length=2, label="Driving Class License", help_text="Format: 3, 3A ...")
+    drivingClass = forms.CharField(max_length=2, label="Driving Class License", help_text="Format: 3, 3A ...")
     driverContactNo = forms.IntegerField(label="Contact Number")
 
     class Meta:
@@ -116,7 +121,7 @@ class AddVehicleForm(ModelForm):
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
     transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Format: Manual/Auto")
-    driverClass = forms.CharField(max_length=2, label="Driving Class needed", help_text="Format: 3, 3A ...")
+    drivingClass = forms.CharField(max_length=2, label="Driving Class needed", help_text="Format: 3, 3A ...")
     capacity = forms.IntegerField(label="Sitting Capacity")
 
     class Meta:
