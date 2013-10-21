@@ -1,0 +1,10 @@
+{% block content %}
+<form action="addDriver" method="post">{% csrf_token %}
+   <input type="hidden" name="coyId" value={{ request.session.coyId }}>
+  {{ form.as_p }}
+   <input type="submit" value="Add New" />
+</form>
+<form action="addVehicle" method="post">
+    <input type="submit" value="Next" />{% csrf_token %}
+</form>
+{% endblock %}

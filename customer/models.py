@@ -2,7 +2,13 @@ import re
 from django import forms
 from django.db import models
 from django.forms import ModelForm
+from admin import models as adminModel
 
+
+def validateDelimitComma(value):
+    if re.search('^(([0-9a-zA-Z][0-9a-zA-Z_]*)([,][0-9a-zA-Z][0-9a-zA-Z_]*)*)$',value) == None:
+        raise forms.ValidationError("Please enter values delimited by commas.")
+    return value
 
 # Create your models here.
 class Job(models.Model):
@@ -63,3 +69,21 @@ class JobForm(ModelForm):
         if paidStatus != 'N' and paidStatus != 'Y':
             raise forms.ValidationError("Enter a valid paid status")
         return paidStatus
+
+
+class companySearchForm(ModelForm):
+    coyName = forms.CharField(max_length=256, label="Company Name:", validators=[validateDelimitComma])
+    streetName = forms.CharField(max_length=256, label="Street Name:", validators=[validateDelimitComma])
+
+    class Meta:
+        model = adminModel.Company
+        exclude = ['coyId', 'email', 'faxNo', 'coyContactNo', 'zipcode', 'rating']
+
+
+class vehicleSearchForm(ModelForm):
+    coyName = forms.CharField(max_length=256, label="Company Name:", validators=[validateDelimitComma])
+    streetName = forms.CharField(max_length=256, label="Street Name:", validators=[validateDelimitComma])
+
+    class Meta:
+        model = adminModel.Company
+        exclude = ['coyId', 'email', 'faxNo', 'coyContactNo', 'zipcode', 'rating']
