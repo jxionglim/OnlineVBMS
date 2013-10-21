@@ -6,7 +6,8 @@ cursor = connection.cursor()
 def getMaxCustomerId():
     query = 'SELECT MAX(cusId) FROM customer'
     cursor.execute(query)
-    return cursor.fetchone()[0] if not None else 0
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
 
 
 def insertCustomer(params):
