@@ -120,10 +120,34 @@ class AddVehicleForm(ModelForm):
     iuNo = forms.IntegerField(label="IU Number")
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
-    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Format: Manual/Auto")
-    drivingClass = forms.CharField(max_length=2, label="Driving Class needed", help_text="Format: 3, 3A ...")
     capacity = forms.IntegerField(label="Sitting Capacity")
+    drivingClass = forms.CharField(max_length=2, label="Driving Class needed", help_text="Format: 3, 3A ...")
+    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Format: Manual/Auto")
 
     class Meta:
         model = Vehicle
-        exclude = ['coyId']
+        exclude = ['coyId', 'vehType']
+
+
+class AddCarForm(ModelForm):
+    category = forms.CharField(max_length=9, label="Category", validators=[validateBlank])
+
+    class Meta:
+        model = Car
+        exclude = ['carplateNo']
+
+
+class AddBusForm(ModelForm):
+    category = forms.CharField(max_length=9, label="Category", validators=[validateBlank])
+
+    class Meta:
+        model = Bus
+        exclude = ['carplateNo']
+
+
+class AddLorryForm(ModelForm):
+    tons = forms.IntegerField(label="Tons")
+
+    class Meta:
+        model = Lorry
+        exclude = ['carplateNo']

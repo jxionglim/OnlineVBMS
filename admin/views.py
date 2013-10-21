@@ -2,14 +2,13 @@ from django.db import connection, transaction
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm
+from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm, AddCarForm, AddBusForm, AddLorryForm
 
-def register(request):
+
+def registerCompany(request):
     if request.method == 'POST':
-        cform = AddCompanyForm(request.POST)
-        dform = AddDriverForm(request.POST)
-        vform = AddVehicleForm(request.POST)
-        if cform.is_valid() and dform.is_valid() and vform.is_valid():
+        form = AddCompanyForm(request.POST)
+        if form.is_valid():
             cursor = connection.cursor()
             query = 'SELECT MAX(coyId) FROM Company'
             cursor.execute(query)
@@ -27,7 +26,20 @@ def register(request):
             ]
             cursor.execute(query, params)
             transaction.commit_unless_managed()
+            request.session['coyId'] = coyId
+            return HttpResponseRedirect('/admin/addDriver')
+    else:
+        form = AddCompanyForm()
+    return render_to_response('admin/addCompany.html', {
+        'form': form
+    }, context_instance=RequestContext(request))
 
+
+def registerDriver(request):
+    if request.method == 'POST':
+        form = AddDriverForm(request.POST)
+        if form.is_valid():
+            cursor = connection.cursor()
             query = 'SELECT MAX(driverId) FROM Driver'
             cursor.execute(query)
             row = cursor.fetchone()
@@ -38,33 +50,54 @@ def register(request):
                 request.POST['firstName'],
                 request.POST['lastName'],
                 request.POST['driverContactNo'],
-                request.POST['driverClass'],
-                coyId
+                request.POST['drivingClass'],
+                request.POST['coyId']
             ]
-            cursor.execute(query, params)
+            cursor.execute(query,params)
             transaction.commit_unless_managed()
+            request.session['coyId'] = request.POST['coyId']
+            return HttpResponseRedirect('/admin/addDriver')
+    else:
+        form = AddDriverForm()
+    return render_to_response('admin/addDriver.html', {
+        'form': form
+    }, context_instance=RequestContext(request))
 
-            query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            print(request.POST['select'])
-            """params = [
+
+def registerVehicle(request):
+    if request.method == 'POST':
+        form = AddVehicleForm(request.POST)
+        if form.is_valid():
+            cursor = connection.cursor()
+            query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            params = [
                 request.POST['carplateNo'],
                 request.POST['iuNo'],
                 request.POST['manufacturer'],
                 request.POST['model'],
-                request.POST['transType'],
-                request.POST['driverClass'],
                 request.POST['capacity'],
+                request.POST['drivingClass'],
+                request.POST['transType'],
+                request.POST['vehType'],
+                request.POST['coyId']
             ]
-            cursor.execute(query, params)
-            transaction.commit_unless_managed()"""
-            return HttpResponseRedirect('/admin')
-    else:
-        cform = AddCompanyForm()
-        dform = AddDriverForm()
-        vform = AddVehicleForm()
-    return render_to_response('admin/addCompany.html', {
-    'cform': cform,
-    'dform': dform,
-    'vform': vform
-    }, context_instance=RequestContext(request))
+            cursor.execute(query,params)
+            transaction.commit_unless_managed()
 
+            if request.POST['vehType'] == "c":
+                query = "INSERT INTO CAR VALUES (%s,%s)"
+                params = [
+                    request.POST['carplateNo'],
+                    request.POST['category']
+                ]
+                cursor.execute(query,params)
+                transaction.commit_unless_managed()
+            return HttpResponseRedirect('/admin/addVehicle')
+    else:
+        form = AddVehicleForm()
+    return render_to_response('admin/addVehicle.html', {
+        'form': form,
+        'cform': AddCarForm,
+        'bform': AddBusForm,
+        'lform': AddLorryForm
+    }, context_instance=RequestContext(request))

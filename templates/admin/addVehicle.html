@@ -1,0 +1,41 @@
+{% block content %}
+<form action="addVehicle" method="post">
+    <input type="hidden" name="coyId" value={{ request.session.coyId }}>
+    Type of Vehicle:
+    <select id="select" name="vehType" onChange="handleSelection(value)">
+    <option selected>Please select one </option>
+    <option value="c">Car</option>
+    <option value="b">Bus</option>
+    <option value="l">Lorry</option>
+    </select>
+    {{ form.as_p }}
+    <div id="div1"></div>
+    <br>
+    <input type="submit" value="Next" />{% csrf_token %}
+</form>
+{% endblock %}
+
+<script type="text/javascript">
+function handleSelection(choice) {
+    document.getElementById('select').disabled=false;
+    var thediv=document.getElementById('div1');
+    if (choice=="c") {
+        var extras=document.createElement('div');
+        document.getElementById('div1').innerHTML="";
+        extras.innerHTML='{{ cform.as_p }}'
+        thediv.appendChild(extras);
+    }
+    if (choice=="b"){
+        var extras=document.createElement('div');
+        document.getElementById('div1').innerHTML="";
+        extras.innerHTML='{{ bform.as_p }}'
+        thediv.appendChild(extras);
+    }
+    if (choice=="l") {
+        var extras=document.createElement('div');
+        document.getElementById('div1').innerHTML="";
+        extras.innerHTML='{{ lform.as_p }}'
+        thediv.appendChild(extras);
+    }
+}
+</script>

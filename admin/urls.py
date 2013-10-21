@@ -1,6 +1,7 @@
-from django.conf.urls import patterns, url
-from admin import views
+from django.conf.urls import *
 
-urlpatterns = patterns('',
-    (r'^$', views.register)
+urlpatterns = patterns('admin.views',
+    (r'^addCompany$', 'registerCompany'),
+    (r'^addDriver$', 'registerDriver'),
+    (r'^addVehicle$', 'registerVehicle'),
 )

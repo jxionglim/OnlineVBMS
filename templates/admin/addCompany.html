@@ -1,43 +1,7 @@
 {% block content %}
 <form action="" method="post">{% csrf_token %}
 <h3>Company Details</h3>
-{{ cform.as_p }}
-<br>
-<h3>Driver Details</h3>
-{{ dform.as_p }}
-<br>
-<h3>Vehicle Details</h3>
-Type of Vehicle:
-<select id="select" onChange="handleSelection(value)">
-<option selected>Please select one </option>
-<option value="first">Car</option>
-<option value="second">Bus</option>
-<option value="third">Lorry</option>
-</select>
-{{ vform.as_p }}
-<div id="div1"></div>
-<br>
+{{ form.as_p }}
 <input type="submit" value="Submit" />
 </form>
 {% endblock %}
-
-<script type="text/javascript">
-function handleSelection(choice) {
-document.getElementById('select').disabled=false;
-var thediv=document.getElementById('div1');
-if (choice=="first" || choice=="second") {
-var extras=document.createElement('div');
-document.getElementById('div1').innerHTML="";
-extras.innerHTML='<label>Category: </label>' +
-                '<input name="category" type="text" style="width:200px"></input>'
-thediv.appendChild(extras);
-	}
-if (choice=="third") {
-var extras=document.createElement('div');
-document.getElementById('div1').innerHTML="";
-extras.innerHTML='<label>Ton: </label>' +
-                '<input name="ton" type="text" style="width:200px"></input>'
-thediv.appendChild(extras);
-	}
-}
-</script>
