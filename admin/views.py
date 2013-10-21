@@ -1,20 +1,16 @@
-from django.db import connection, transaction
+import dbaccess
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm, AddCarForm, AddBusForm, AddLorryForm
+from django.db import connection, transaction
 
 
 def registerCompany(request):
     if request.method == 'POST':
         form = AddCompanyForm(request.POST)
         if form.is_valid():
-            cursor = connection.cursor()
-            query = 'SELECT MAX(coyId) FROM Company'
-            cursor.execute(query)
-            row = cursor.fetchone()
-            coyId = row[0]+1 if row[0] is not None else 1
-            query = "INSERT INTO Company VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            coyId = dbaccess.getMaxCompanyId()+1
             params = [
                 coyId,
                 request.POST['coyName'],
@@ -24,8 +20,7 @@ def registerCompany(request):
                 request.POST['zipcode'],
                 request.POST['streetName']
             ]
-            cursor.execute(query, params)
-            transaction.commit_unless_managed()
+            dbaccess.insertCompany(params)
             request.session['coyId'] = coyId
             return HttpResponseRedirect('/admin/addDriver')
     else:
@@ -39,12 +34,7 @@ def registerDriver(request):
     if request.method == 'POST':
         form = AddDriverForm(request.POST)
         if form.is_valid():
-            cursor = connection.cursor()
-            query = 'SELECT MAX(driverId) FROM Driver'
-            cursor.execute(query)
-            row = cursor.fetchone()
-            driverId = row[0]+1 if row[0] is not None else 1
-            query = "INSERT INTO Driver VALUES (%s,%s,%s,%s,%s,%s)"
+            driverId = dbaccess.getMaxDriverId()+1
             params = [
                 driverId,
                 request.POST['firstName'],
@@ -53,8 +43,7 @@ def registerDriver(request):
                 request.POST['drivingClass'],
                 request.POST['coyId']
             ]
-            cursor.execute(query,params)
-            transaction.commit_unless_managed()
+            dbaccess.insertDriver(params)
             request.session['coyId'] = request.POST['coyId']
             return HttpResponseRedirect('/admin/addDriver')
     else:
@@ -68,8 +57,6 @@ def registerVehicle(request):
     if request.method == 'POST':
         form = AddVehicleForm(request.POST)
         if form.is_valid():
-            cursor = connection.cursor()
-            query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             params = [
                 request.POST['carplateNo'],
                 request.POST['iuNo'],
@@ -81,17 +68,26 @@ def registerVehicle(request):
                 request.POST['vehType'],
                 request.POST['coyId']
             ]
-            cursor.execute(query,params)
-            transaction.commit_unless_managed()
+            dbaccess.insertVehicle(params)
 
             if request.POST['vehType'] == "c":
-                query = "INSERT INTO CAR VALUES (%s,%s)"
                 params = [
                     request.POST['carplateNo'],
                     request.POST['category']
                 ]
-                cursor.execute(query,params)
-                transaction.commit_unless_managed()
+                dbaccess.insertCar(params)
+            elif request.POST['vehType'] == "b":
+                params = [
+                    request.POST['carplateNo'],
+                    request.POST['category']
+                ]
+                dbaccess.insertBus(params)
+            elif request.POST['vehType'] == "l":
+                params = [
+                    request.POST['carplateNo'],
+                    request.POST['tons']
+                ]
+                dbaccess.insertLorry(params)
             return HttpResponseRedirect('/admin/addVehicle')
     else:
         form = AddVehicleForm()

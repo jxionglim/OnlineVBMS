@@ -4,7 +4,7 @@
   {{ form.as_p }}
    <input type="submit" value="Add New" />
 </form>
-<form action="addVehicle" method="post">
+<form action="addVehicle" method="get">
     <input type="submit" value="Next" />{% csrf_token %}
 </form>
 {% endblock %}
