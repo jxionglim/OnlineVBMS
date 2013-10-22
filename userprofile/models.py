@@ -60,6 +60,12 @@ class RegisterForm(ModelForm):
         model = Customer
         exclude = ('user', 'cusId')
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        if dbaccess.getCustByEmail(email):
+            raise forms.ValidationError("This email is already registered")
+        return email
+
     def clean_cExpDate(self):
         cExpDate = self.cleaned_data.get('cExpDate', '')
         if re.search('^(0[1-9]|1[012])/\d\d$',cExpDate) == None:
