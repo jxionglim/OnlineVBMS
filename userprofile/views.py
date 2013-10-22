@@ -16,6 +16,7 @@ def register(request):
         if form.is_valid():
             user = User.objects.create_user(request.POST['email'], None, request.POST['passwd'])
             user.save()
+            print dbaccess.getMaxCustomerId()
             cusId = dbaccess.getMaxCustomerId()+1
             params = [
                 cusId,
