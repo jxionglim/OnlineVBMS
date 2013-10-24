@@ -1,0 +1,28 @@
+{% block content %}
+<table>
+    <tr>
+        <td width="150">S/N</td>
+        <td width="150">First Name</td>
+        <td width="150">Last Name</td>
+        <td width="150">Contact Number</td>
+        <td width="150">Driving Class</td>
+        <td width="150">Action</td>
+    </tr>
+    {% for driver in drivers %}
+        <tr>
+        {% for attribute in driver %}
+            <td width="150">{{ attribute }}</td>
+        {% endfor %}
+        {% for attribute in driver %}
+            {% if forloop.counter == 1 %}
+                <td width="150"><a href="/admin/editDriver/d_id={{ attribute }}">Edit</a>&nbsp&nbsp<a href="/admin/deleteDriver/d_id={{ attribute }}">Delete</a></td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+<br>
+<a href="/admin/addDriver/id={{ coyId }}">Add a new Driver</a>
+<br>
+<a href="/admin/viewCompany">Back</a>
+{% endblock %}

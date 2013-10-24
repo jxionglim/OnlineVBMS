@@ -1,0 +1,63 @@
+{% block content %}
+<h3>asd</h3>
+<table>
+    <tr>
+        <td width="150">Carplate No</td>
+        <td width="150">iuNo</td>
+        <td width="150">Manufacturer</td>
+        <td width="150">Model</td>
+        <td width="150">Capacity</td>
+        <td width="150">Transmission Type</td>
+        <td width="150">Vehicle Type</td>
+    </tr>
+    {% for vehicle in vehicles %}
+        <tr>
+        {% for attribute in vehicle %}
+            {% if attribute == 'c' %}
+                <td width="150">car</td>
+            {% elif attribute == 'b' %}
+                <td width="150">bus</td>
+            {% elif attribute == 'l' %}
+                <td width="150">lorry</td>
+            {% else %}
+                <td width="150">{{ attribute }}</td>
+            {% endif %}
+        {% endfor %}
+        {% for attribute in vehicle %}
+            {% if forloop.counter == 1 %}
+                <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+<br>
+<h3>Cars</h3>
+<table>
+    <tr>
+        <td width="150">Carplate No</td>
+        <td width="150">iuNo</td>
+        <td width="150">Manufacturer</td>
+        <td width="150">Model</td>
+        <td width="150">Capacity</td>
+        <td width="150">Transmission Type</td>
+        <td width="150">Category</td>
+    </tr>
+    {% for car in cars %}
+        <tr>
+        {% for attribute in car %}
+            <td width="150">{{ attribute }}</td>
+        {% endfor %}
+        {% for attribute in car %}
+            {% if forloop.counter == 1 %}
+                <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+<br>
+<a href="/admin/addVehicle/id={{ coyId }}">Add a new Vehicle</a>
+<br>
+<a href="/admin/viewCompany">Back</a>
+{% endblock %}

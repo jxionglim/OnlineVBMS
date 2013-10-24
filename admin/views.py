@@ -1,11 +1,16 @@
-import dbaccess
+import dbaccess, urlparse
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm, AddCarForm, AddBusForm, AddLorryForm
-from django.db import connection, transaction
+from django.utils.datastructures import SortedDict
+from django.views.decorators.csrf import csrf_exempt
 
+def home(request):
+    return render_to_response('admin/home.html', {
+    }, context_instance=RequestContext(request))
 
+@csrf_exempt
 def registerCompany(request):
     if request.method == 'POST':
         form = AddCompanyForm(request.POST)
@@ -29,8 +34,9 @@ def registerCompany(request):
         'form': form
     }, context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def registerDriver(request):
+    status = 'normal'
     if request.method == 'POST':
         form = AddDriverForm(request.POST)
         if form.is_valid():
@@ -41,35 +47,82 @@ def registerDriver(request):
                 request.POST['lastName'],
                 request.POST['driverContactNo'],
                 request.POST['drivingClass'],
-                request.POST['coyId']
+                request.session['coyId']
             ]
             dbaccess.insertDriver(params)
-            request.session['coyId'] = request.POST['coyId']
-            return HttpResponseRedirect('/admin/addDriver')
+            if request.get_full_path().__contains__('id'):
+                return HttpResponseRedirect('/admin/addDriver/id='+str(request.session['coyId']))
+            else:
+                return HttpResponseRedirect('/admin/addDriver')
     else:
         form = AddDriverForm()
+        if request.get_full_path().__contains__('id'):
+            request.session['coyId'] = request.get_full_path().split('=')[1]
+            status = 'redirect'
+        else:
+            if 'coyId' not in request.session:
+                return HttpResponseRedirect('/admin/home')
+        print(status)
+    if 'coyId' in request.session:
+        coyId = request.session['coyId']
+    else:
+        coyId = None
     return render_to_response('admin/addDriver.html', {
-        'form': form
+        'form': form,
+        'status': status,
+        'coyId': coyId
     }, context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def registerVehicle(request):
+    status = 'normal'
     if request.method == 'POST':
         form = AddVehicleForm(request.POST)
         if form.is_valid():
+            drivingclass = None
+            transType = None
+            if request.POST['vehType'] == 'c':
+                if request.POST['transType'] == 'manual':
+                    drivingclass = '3'
+                    transType = 'manual'
+                else:
+                    drivingclass = '3a'
+                    transType = 'auto'
+            elif request.POST['vehType'] == 'b':
+                if request.POST['transType'] == 'manual':
+                    drivingclass = '4'
+                    transType = 'manual'
+                else:
+                    drivingclass = '4a'
+                    transType = 'auto'
+            elif request.POST['vehType'] == 'l':
+                if request.POST['tons'] == '1' and request.POST['transType'] == 'manual':
+                    drivingclass = '3'
+                    transType = 'manual'
+                elif request.POST['tons'] == '1' and request.POST['transType'] == 'auto':
+                    drivingclass = '3a'
+                    transType = 'auto'
+                elif request.POST['tons'] == '3' and request.POST['transType'] == 'manual':
+                    drivingclass = '4'
+                    transType = 'manual'
+                elif request.POST['tons'] == '3' and request.POST['transType'] == 'auto':
+                    drivingclass = '4a'
+                    transType = 'auto'
+                elif request.POST['tons'] == '5':
+                    drivingclass = '5'
+                    transType = 'manual'
             params = [
                 request.POST['carplateNo'],
                 request.POST['iuNo'],
                 request.POST['manufacturer'],
                 request.POST['model'],
                 request.POST['capacity'],
-                request.POST['drivingClass'],
-                request.POST['transType'],
+                drivingclass,
+                transType,
                 request.POST['vehType'],
-                request.POST['coyId']
+                request.session['coyId']
             ]
             dbaccess.insertVehicle(params)
-
             if request.POST['vehType'] == "c":
                 params = [
                     request.POST['carplateNo'],
@@ -88,12 +141,140 @@ def registerVehicle(request):
                     request.POST['tons']
                 ]
                 dbaccess.insertLorry(params)
-            return HttpResponseRedirect('/admin/addVehicle')
+            if request.get_full_path().__contains__('id'):
+                return HttpResponseRedirect('/admin/addVehicle/id='+str(request.session['coyId']))
+            else:
+                return HttpResponseRedirect('/admin/addVehicle')
     else:
         form = AddVehicleForm()
+        if request.get_full_path().__contains__('id'):
+            request.session['coyId'] = request.get_full_path().split('=')[1]
+            status = 'redirect'
+        else:
+            if 'coyId' not in request.session:
+                return HttpResponseRedirect('/admin/home')
+    if 'coyId' in request.session:
+        coyId = request.session['coyId']
+    else:
+        coyId = None
     return render_to_response('admin/addVehicle.html', {
         'form': form,
         'cform': AddCarForm,
         'bform': AddBusForm,
-        'lform': AddLorryForm
+        'lform': AddLorryForm,
+        'status': status,
+        'coyId': coyId
     }, context_instance=RequestContext(request))
+
+@csrf_exempt
+def viewCompany(request):
+    if 'coyId' in request.session:
+        del request.session['coyId']
+    allCoy = dbaccess.getCompanies()
+    return render_to_response('admin/viewCompany.html', {
+        'allCoy': allCoy
+    }, context_instance=RequestContext(request))
+
+
+@csrf_exempt
+def viewDriver(request):
+    if 'coyId' in request.session:
+        del request.session['coyId']
+    coyId = request.get_full_path().split('=')[1]
+    drivers = dbaccess.getDriversById(request.get_full_path().split('=')[1])
+    return render_to_response('admin/viewDriver.html', {
+        'drivers': drivers,
+        'coyId': coyId
+    }, context_instance=RequestContext(request))
+
+
+@csrf_exempt
+def viewVehicle(request):
+    if 'coyId' in request.session:
+        del request.session['coyId']
+    coyId = request.get_full_path().split('=')[1]
+    vehicles = dbaccess.getVehiclesById(request.get_full_path().split('=')[1])
+    cars = dbaccess.getCarsById(request.get_full_path().split('=')[1])
+    print(len(cars))
+    return render_to_response('admin/viewVehicle.html', {
+        'vehicles': vehicles,
+        'cars': cars,
+        'coyId': coyId
+    }, context_instance=RequestContext(request))
+
+
+@csrf_exempt
+def editCompany(request):
+    coyRow = dbaccess.getCompanyById(request.get_full_path().split('=')[1])
+    if request.method == 'POST':
+        form = AddCompanyForm(request.POST)
+        if form.is_valid():
+            params = [
+                request.POST['coyName'],
+                request.POST['email'],
+                request.POST['faxNo'],
+                request.POST['coyContactNo'],
+                request.POST['zipcode'],
+                request.POST['streetName'],
+                coyRow[0]
+            ]
+            dbaccess.updateCompany(params)
+            return HttpResponseRedirect('/admin/viewCompany')
+    else:
+        form = AddCompanyForm(initial={
+            'coyName': coyRow[1],
+            'email': coyRow[2],
+            'faxNo': coyRow[3],
+            'coyContactNo': coyRow[4],
+            'zipcode': coyRow[5],
+            'streetName': coyRow[6],
+        })
+    return render_to_response('admin/editCompany.html', {
+        'form': form,
+    }, context_instance=RequestContext(request))
+
+
+@csrf_exempt
+def editDriver(request):
+    driverRow = dbaccess.getDriverByDid(request.get_full_path().split('=')[1])
+    if request.method == 'POST':
+        form = AddDriverForm(request.POST)
+        if form.is_valid():
+            params = [
+                request.POST['firstName'],
+                request.POST['lastName'],
+                request.POST['driverContactNo'],
+                request.POST['drivingClass'],
+                driverRow[0]
+            ]
+            dbaccess.updateDriver(params)
+            return HttpResponseRedirect('/admin/viewDriver/id=' + str(driverRow[5]))
+    else:
+        form = AddDriverForm(initial={
+            'firstName': driverRow[1],
+            'lastName': driverRow[2],
+            'driverContactNo': driverRow[3],
+            'drivingClass': driverRow[4],
+        })
+    return render_to_response('admin/editDriver.html', {
+        'form': form,
+    }, context_instance=RequestContext(request))
+
+
+@csrf_exempt
+def deleteCompany(request):
+    dbaccess.deleteCompany(request.get_full_path().split('=')[1])
+    return HttpResponseRedirect('/admin/viewCompany')
+
+
+@csrf_exempt
+def deleteDriver(request):
+    coyId = dbaccess.getDriverByDid(request.get_full_path().split('=')[1])[5]
+    dbaccess.deleteDriver(request.get_full_path().split('=')[1])
+    return HttpResponseRedirect('/admin/viewDriver/id=' + str(coyId))
+
+@csrf_exempt
+def deleteVehicle(request):
+    coyId = dbaccess.getCoyIdByCarplateNo(request.get_full_path().split('=')[1])
+    dbaccess.deleteVehicle(request.get_full_path().split('=')[1])
+    return HttpResponseRedirect('/admin/viewVehicle/id=' + str(coyId))

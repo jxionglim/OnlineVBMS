@@ -1,0 +1,29 @@
+{% block content %}
+<table>
+    <tr>
+        <td width="150">S/N</td>
+        <td width="150">Company</td>
+        <td width="150">Email</td>
+        <td width="150">Fax Number</td>
+        <td width="150">Contact Number</td>
+        <td width="150">Zip Code</td>
+        <td width="150">Street Name</td>
+        <td width="80">Action</td>
+    </tr>
+    {% for coy in allCoy %}
+        <tr>
+        {% for attribute in coy %}
+            <td width="150">{{ attribute }}</td>
+        {% endfor %}
+        {% for attribute in coy %}
+            {% if forloop.counter == 1 %}
+                <td width="80"><a href="/admin/editCompany/id={{ attribute }}">Edit</a>&nbsp&nbsp<a href="/admin/deleteCompany/id={{ attribute }}">Delete</a></td>
+                <td width="20"></td>
+                <td width="80"><a href="/admin/viewDriver/id={{ attribute }}">View Drivers</a></td>
+                <td width="80"><a href="/admin/viewVehicle/id={{ attribute }}">View Vehicles</a></td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

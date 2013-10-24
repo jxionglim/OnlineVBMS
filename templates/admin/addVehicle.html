@@ -1,6 +1,6 @@
 {% block content %}
-<form action="addVehicle" method="post">
-    <input type="hidden" name="coyId" value={{ request.session.coyId }}>
+<form action="" method="post">
+    <h3>Add a new Vehicle</h3>
     Type of Vehicle:
     <select id="select" name="vehType" onChange="handleSelection(value)">
     <option selected>Please select one </option>
@@ -11,9 +11,34 @@
     {{ form.as_p }}
     <div id="div1"></div>
     <br>
-    <input type="submit" value="Next" />{% csrf_token %}
+    <input type="submit" value="Add New" />
 </form>
+{% if status == 'normal' %}
+    <input type="submit" value="Finish"
+    onclick="window.location='/admin/viewCompany';" />
+{% elif status == 'redirect' %}
+    <input type="submit" value="Finish"
+    onclick="window.location='/admin/viewVehicle/id={{ coyId }}';" />
+{% endif %}
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script type="text/javascript">
 function handleSelection(choice) {

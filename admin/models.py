@@ -1,4 +1,4 @@
-import re
+import re, dbaccess
 from django import forms
 from django.db import models
 from django.forms import ModelForm
@@ -102,7 +102,7 @@ class AddCompanyForm(ModelForm):
 class AddDriverForm(ModelForm):
     firstName = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
     lastName = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
-    drivingClass = forms.CharField(max_length=2, label="Driving Class License", help_text="Format: 3, 3A ...")
+    drivingClass = forms.CharField(max_length=2, label="Driving Class License", help_text="Format: 3, 3a ...")
     driverContactNo = forms.IntegerField(label="Contact Number")
 
     class Meta:
@@ -115,18 +115,18 @@ class AddDriverForm(ModelForm):
             raise forms.ValidationError("Contact number must be a 8 digit number starting with 8 or 9")
         return driverContactNo
 
+
 class AddVehicleForm(ModelForm):
     carplateNo = forms.CharField(max_length=8, label="Carplate Number", validators=[validateBlank])
     iuNo = forms.IntegerField(label="IU Number")
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
     capacity = forms.IntegerField(label="Sitting Capacity")
-    drivingClass = forms.CharField(max_length=2, label="Driving Class needed", help_text="Format: 3, 3A ...")
-    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Format: Manual/Auto")
+    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Format: manual/auto (Note: For 5 Ton vehicles, Transmission Type is Manual by default.)")
 
     class Meta:
         model = Vehicle
-        exclude = ['coyId', 'vehType']
+        exclude = ['coyId', 'vehType', 'drivingClass']
 
 
 class AddCarForm(ModelForm):

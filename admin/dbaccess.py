@@ -9,6 +9,14 @@ def getMaxCompanyId():
     return row[0] if row[0] is not None else 0
 
 
+def getMaxDriverId():
+    cursor = connection.cursor()
+    query = 'SELECT MAX(driverId) FROM Driver'
+    cursor.execute(query)
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
+
+
 def insertCompany(params):
     cursor = connection.cursor()
     query = "INSERT INTO Company VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -17,12 +25,18 @@ def insertCompany(params):
     return params[0]
 
 
-def getMaxDriverId():
+def updateCompany(params):
     cursor = connection.cursor()
-    query = 'SELECT MAX(driverId) FROM Driver'
-    cursor.execute(query)
-    row = cursor.fetchone()
-    return row[0] if row[0] is not None else 0
+    query = "UPDATE COMPANY SET coyName=%s, email=%s, faxNo=%s, contactNo=%s, zipcode=%s, streetName=%s WHERE coyId=%s"
+    cursor.execute(query, params)
+    transaction.commit_unless_managed()
+
+
+def deleteCompany(id):
+    cursor = connection.cursor()
+    query = "DELETE FROM COMPANY WHERE coyId=%s"
+    cursor.execute(query, [id])
+    transaction.commit_unless_managed()
 
 
 def insertDriver(params):
@@ -33,12 +47,33 @@ def insertDriver(params):
     return params[0]
 
 
+def updateDriver(params):
+    cursor = connection.cursor()
+    query = "UPDATE DRIVER SET firstName=%s, lastName=%s, contactNo=%s, drivingClass=%s WHERE driverId=%s"
+    cursor.execute(query, params)
+    transaction.commit_unless_managed()
+
+
+def deleteDriver(id):
+    cursor = connection.cursor()
+    query = "DELETE FROM DRIVER WHERE driverId=%s"
+    cursor.execute(query, [id])
+    transaction.commit_unless_managed()
+
+
 def insertVehicle(params):
     cursor = connection.cursor()
     query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     cursor.execute(query, params)
     transaction.commit_unless_managed()
     return params[0]
+
+
+def deleteVehicle(carplateNo):
+    cursor = connection.cursor()
+    query = "DELETE FROM VEHICLE WHERE carplateNo=%s"
+    cursor.execute(query, [carplateNo])
+    transaction.commit_unless_managed()
 
 
 def insertCar(params):
@@ -63,3 +98,75 @@ def insertLorry(params):
     cursor.execute(query, params)
     transaction.commit_unless_managed()
     return params[0]
+
+
+def getCompanies():
+    cursor = connection.cursor()
+    query = 'SELECT * FROM COMPANY'
+    cursor.execute(query)
+    row = cursor.fetchall()
+    return row
+
+
+def getCompanyById(id):
+    cursor = connection.cursor()
+    query = "SELECT * FROM COMPANY WHERE coyId=%s"
+    cursor.execute(query, [id])
+    row = cursor.fetchone()
+    return row
+
+
+def getDriversById(id):
+    cursor = connection.cursor()
+    query = "SELECT driverId, firstName, lastName, contactNo, drivingClass FROM DRIVER WHERE coyId=%s"
+    cursor.execute(query, [id])
+    row = cursor.fetchall()
+    return row
+
+
+def getDriverByDid(id):
+    cursor = connection.cursor()
+    query = "SELECT * FROM DRIVER WHERE driverId=%s"
+    cursor.execute(query, [id])
+    row = cursor.fetchone()
+    return row
+
+
+def getVehiclesById(id):
+    cursor = connection.cursor()
+    query = "SELECT carplateNo, iuNo, manufacturer, model, capacity, transType, vehType FROM VEHICLE WHERE coyId=%s"
+    cursor.execute(query, [id])
+    row = cursor.fetchall()
+    return row
+
+
+def getCoyIdByCarplateNo(carplateNo):
+    cursor = connection .cursor()
+    query = "SELECT coyId FROM VEHICLE WHERE carplateNo=%s"
+    cursor.execute(query, [carplateNo])
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
+
+
+def getCarsById(id):
+    cursor = connection.cursor()
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, c.category FROM VEHICLE v, CAR c WHERE v.coyId=%s AND v.carplateNo = c.carplateNo"
+    cursor.execute(query, [id])
+    row = cursor.fetchall()
+    return row
+
+
+def getBusById(id):
+    cursor = connection.cursor()
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, c.category FROM VEHICLE v, BUS b WHERE v.coyId=%s AND v.carplateNo = b.carplateNo"
+    cursor.execute(query, [id])
+    row = cursor.fetchall()
+    return row
+
+
+def getLorrysById(id):
+    cursor = connection.cursor()
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, c.category FROM VEHICLE v, LORRY l WHERE v.coyId=%s AND v.carplateNo = l.carplateNo"
+    cursor.execute(query, [id])
+    row = cursor.fetchall()
+    return row
