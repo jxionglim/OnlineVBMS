@@ -3,7 +3,6 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm, AddCarForm, AddBusForm, AddLorryForm
-from django.utils.datastructures import SortedDict
 from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
@@ -175,7 +174,6 @@ def viewCompany(request):
         'allCoy': allCoy
     }, context_instance=RequestContext(request))
 
-
 @csrf_exempt
 def viewDriver(request):
     if 'coyId' in request.session:
@@ -187,21 +185,23 @@ def viewDriver(request):
         'coyId': coyId
     }, context_instance=RequestContext(request))
 
-
 @csrf_exempt
 def viewVehicle(request):
     if 'coyId' in request.session:
         del request.session['coyId']
     coyId = request.get_full_path().split('=')[1]
-    vehicles = dbaccess.getVehiclesById(request.get_full_path().split('=')[1])
     cars = dbaccess.getCarsById(request.get_full_path().split('=')[1])
-    print(len(cars))
+    buses = dbaccess.getBusesById(request.get_full_path().split('=')[1])
+    lorries = dbaccess.getLorriesById(request.get_full_path().split('=')[1])
     return render_to_response('admin/viewVehicle.html', {
-        'vehicles': vehicles,
         'cars': cars,
-        'coyId': coyId
+        'buses': buses,
+        'lorries': lorries,
+        'coyId': coyId,
+        'carStatus': True if len(cars) != 0 else False,
+        'busStatus': True if len(buses) != 0 else False,
+        'lorryStatus': True if len(lorries) != 0 else False
     }, context_instance=RequestContext(request))
-
 
 @csrf_exempt
 def editCompany(request):
@@ -233,7 +233,6 @@ def editCompany(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
-
 @csrf_exempt
 def editDriver(request):
     driverRow = dbaccess.getDriverByDid(request.get_full_path().split('=')[1])
@@ -260,12 +259,10 @@ def editDriver(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
-
 @csrf_exempt
 def deleteCompany(request):
     dbaccess.deleteCompany(request.get_full_path().split('=')[1])
     return HttpResponseRedirect('/admin/viewCompany')
-
 
 @csrf_exempt
 def deleteDriver(request):

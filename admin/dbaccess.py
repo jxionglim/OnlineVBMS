@@ -156,17 +156,17 @@ def getCarsById(id):
     return row
 
 
-def getBusById(id):
+def getBusesById(id):
     cursor = connection.cursor()
-    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, c.category FROM VEHICLE v, BUS b WHERE v.coyId=%s AND v.carplateNo = b.carplateNo"
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, b.category FROM VEHICLE v, BUS b WHERE v.coyId=%s AND v.carplateNo = b.carplateNo"
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
 
 
-def getLorrysById(id):
+def getLorriesById(id):
     cursor = connection.cursor()
-    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, c.category FROM VEHICLE v, LORRY l WHERE v.coyId=%s AND v.carplateNo = l.carplateNo"
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, l.tons FROM VEHICLE v, LORRY l WHERE v.coyId=%s AND v.carplateNo = l.carplateNo"
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
