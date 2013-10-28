@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<table>
+    <tr>
+        <td width="150">Job ID</td>
+        <td width="150">Date Created</td>
+        <td width="150">Customer ID</td>
+        <td width="150">Company ID</td>
+        <td width="150">Amount</td>
+        <td width="150">Paid Status</td>
+        <td width="150">Actions</td>
+    </tr>
+    {% for job in listOfJobs %}
+        <tr>
+        {% for attribute in job %}
+            <td width="150">{{ attribute }}</td>
+        {% endfor %}
+        {% for attribute in job %}
+            {% if forloop.counter == 1 %}
+                <td width="150"><a href="/customer/viewJobs/j_id={{ attribute }}">View Trips</a></td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

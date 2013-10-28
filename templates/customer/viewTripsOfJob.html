@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<table>
+    <tr>
+        <td width="150">Trip ID</td>
+        <td width="150">Start Time</td>
+        <td width="150">End Time</td>
+        <td width="150">Start Location</td>
+        <td width="150">End Location</td>
+        <td width="150">Comments</td>
+        <td width="150">Job ID</td>
+        <td width="150">Customer ID</td>
+        <td width="150">Actions</td>
+    </tr>
+    {% for trip in listOfTrips %}
+        <tr>
+        {% for attribute in trip %}
+            <td width="150">{{ attribute }}</td>
+        {% endfor %}
+        {% for attribute in trip %}
+            {% if forloop.counter == 1 %}
+                <td width="150">
+                    <a href="/customer/viewTrip/e_id={{ attribute }}">Edit</a> &nbsp &nbsp
+                    <a href="/customer/viewTrip/d_id={{ attribute }}">Delete</a>
+                </td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
