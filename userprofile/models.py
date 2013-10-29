@@ -54,7 +54,7 @@ class RegisterForm(ModelForm):
     streetName = forms.CharField(max_length=256, label="Street Name", required=False)
     zipcode = forms.IntegerField(label="Postal Code", required=False)
     cSerialNo = forms.IntegerField(label="Serial Number")
-    cExpDate = forms.CharField(max_length=5, label="Expiry Date", help_text="Format: mm/yy")
+    cExpDate = forms.CharField(max_length=5, label="Expiry Date (mm/yy)")
 
     class Meta:
         model = Customer
@@ -120,8 +120,8 @@ class ProfileForm(ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(max_length=256, label="Email")
-    password = forms.CharField(max_length=256, widget=forms.PasswordInput, label="Password", min_length=8)
+    email = forms.EmailField(max_length=256, label="Email", widget=forms.TextInput(attrs={'placeholder': 'Email'}))
+    password = forms.CharField(max_length=256, widget=forms.PasswordInput(attrs={'placeholder': 'Password'}), label="Password", min_length=8)
 
     def __init__(self, request, *args, **kwargs):
         self.request = request

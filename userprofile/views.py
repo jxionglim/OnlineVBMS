@@ -8,6 +8,15 @@ from django.contrib.auth import logout as auth_logout
 from django.utils.datastructures import SortedDict
 
 
+def home(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+    form = None
+    return render_to_response('userprofile/home.html', {
+        'form': form
+    }, context_instance=RequestContext(request))
+
+
 def register(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home')
@@ -32,7 +41,7 @@ def register(request):
                 user.id
             ]
             dbaccess.insertCustomer(params)
-            return HttpResponseRedirect('/register')
+            return HttpResponseRedirect('/')
     else:
         form = RegisterForm()
 
@@ -48,12 +57,16 @@ def login(request):
         form = LoginForm(request, request.POST)
         if form.is_valid():
             return HttpResponseRedirect('/home')
+        else:
+            success = False
     else:
         form = LoginForm(request)
+        success = True
 
     return render_to_response('userprofile/login.html', {
         'form': form,
-        }, context_instance=RequestContext(request))
+        'success': success,
+    }, context_instance=RequestContext(request))
 
 
 def viewProfile(request):
@@ -72,11 +85,11 @@ def viewProfile(request):
     custCredit = SortedDict([
         ('Serial Number', custRow[8]),
         ('Expiry Date', custRow[7])
-        ])
+    ])
     return render_to_response('userprofile/viewProfile.html', {
         'custInfo': custInfo.iteritems(),
         'custCredit': custCredit.iteritems(),
-        }, context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 def editProfile(request):
@@ -108,10 +121,10 @@ def editProfile(request):
             'zipcode': custRow[5],
             'cSerialNo': custRow[8],
             'cExpDate': custRow[7],
-        })
+            })
     return render_to_response('userprofile/editProfile.html', {
         'form': form,
-        }, context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 def logout(request):
@@ -119,4 +132,4 @@ def logout(request):
         auth_logout(request)
         return HttpResponseRedirect('/')
     else:
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect('/')

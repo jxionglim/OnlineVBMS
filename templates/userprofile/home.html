@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Profile</title>
+    <title>VBMS Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Le styles -->
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -20,7 +20,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="/home">VMBS</a>
+            <a class="brand" href="/home">VBMS</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
                     {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Add Company</a></li>{% endif %}
@@ -41,32 +41,24 @@
 </div>
 
 <div class="container">
-    <div class="hero-unit">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="hero-unit">
-                    <legend><strong>Personal Information</strong>&nbsp&nbsp&nbsp
-                        <a href="/user/edit" class="btn btn-small btn-info">Edit</a>
-                    </legend>
-                    {% for key, values in custInfo %}
-                        <div class="row">
-                            <div class="span2 offset1"><small><strong>{{ key }}</strong></small></div>
-                            <div class="span5 offset1"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
-                        </div>
-                    {% endfor %}
-                    <br>
-                    <legend><strong>Payment Information</strong></legend>
-                    {% for key, values in custCredit %}
-                        <div class="row">
-                            <div class="span2 offset1"><small><strong>{{ key }}</strong></small></div>
-                            <div class="span5 offset1"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
-                        </div>
-                    {% endfor %}
+    <form class="form-search form-horizontal" action="/main" method="get" enctype="multipart/form-data">
+        <div class="hero-unit">
+            <legend><strong>Search Books</strong></legend>
+            {% for fields in searchform %}
+                <div class="control-group input-append">
+                    <label class="control-label">{{ fields.label }}: </label>
+                    <div class="controls">
+                        {% if fields.id == 'search_field' %}
+                            <input id="search_field" name="search_field" type="text" class="span5 search-query" placeholder="Enter search term" {% if fields.data != None %}value={{ fields.data }} {% endif %} >
+                            <button type="submit" class="btn">Search</button>
+                        {% else %}
+                            {{ fields }}
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-    </div>
-
+    </form>
     <hr>
 
     <footer>

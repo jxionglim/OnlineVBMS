@@ -1,6 +1,29 @@
+<html>
+{% block head %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/css/login/login.css">
+{% endblock head %}
+
 {% block content %}
-<form action="" method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
+    {% if success == False %}
+        <div class="notice">
+            <p class="warn">Wrong email and password. Please try again!</p>
+        </div>
+    {% endif %}
+    <div class="container">
+        <section id="content">
+            <form action="" method="post">
+                <h1>VBMS Portal</h1>
+                {% for field in form %}
+                    {{ field }}
+                {% endfor %}
+                <div>
+                    <input type="submit" value="Log in" />
+                    <a href="/register">Register</a>
+			    </div>
+            </form>
+        </section>
+    </div>
 {% endblock %}
+</html>

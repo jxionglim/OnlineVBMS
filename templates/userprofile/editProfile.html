@@ -1,6 +1,113 @@
-{% block content %}
-<form action="" method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VBMS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Add Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <form class="form-horizontal" action="" method="post">
+        {% if initial == True %}
+            <div class="alert alert-warning">
+                <strong>Fill up the information below to allow us to serve you better!</strong>
+            </div>
+        {% endif %}
+        <div class="hero-unit">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="hero-unit">
+                        <legend><strong>Personal Information</strong></legend>
+                        <div class="control-group">
+                            <label class="control-label">Email:</label>
+                            <div class="controls">
+                                <span class="uneditable-input">{{ request.user.username }}</span>
+                            </div>
+                        </div>
+                        {% for fields in form %}
+                            {% if fields.name != 'cSerialNo' and fields.name != 'cExpDate' %}
+                                <div class="control-group">
+                                    <label class="control-label">{{ fields.label }}</label>
+                                    <div class="controls">
+                                        {{ fields }} {% for error in fields.errors %} <span class="help-inline"><small><p class="text-error">{{ error }}</p></small></span> {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <legend><strong>Payment Information</strong></legend>
+                        {% for fields in form %}
+                            {% if fields.name == 'cSerialNo' or fields.name == 'cExpDate' %}
+                                <div class="control-group">
+                                    <label class="control-label">{{ fields.label }}</label>
+                                    <div class="controls">
+                                        {{ fields }}
+                                        {% for error in fields.errors %} <span class="help-inline"><small><p class="text-error">{{ error }}</p></small></span> {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="row">
+                            <div class="span1 offset5"><button class="btn btn-small btn-info" type="submit">Update</button></div>
+                            <div class="span1 offset1"><a href="/user" class="btn btn-small btn-info">&nbsp&nbspBack&nbsp&nbsp</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/bootstrap/js/jquery.js"></script>
+<script src="/bootstrap/js/bootstrap.js"></script>
+<script>
+    $("img").click(function(){
+        $("input[name=profile_pic]").trigger('click');
+    });
+</script>
+</body>
+</html>

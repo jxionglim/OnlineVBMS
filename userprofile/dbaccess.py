@@ -44,6 +44,7 @@ def getCustInfoById(id):
     row = cursor.fetchone()
     return row
 
+
 def getCustByEmail(email):
     cursor = connection.cursor()
     query = "SELECT count(*) FROM customer where email=%s"
