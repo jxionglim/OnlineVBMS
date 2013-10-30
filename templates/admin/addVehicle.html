@@ -30,10 +30,9 @@
 
 
 
-
 <script type="text/javascript">
     function handleSelection(choice){
-        document.getElementById('id_select').disabled=false;
+        document.getElementById('id_vehType').disabled=false;
         document.getElementById('id_category').disabled=false;
         document.getElementById('id_tons').disabled=false;
 
@@ -49,17 +48,17 @@
     }
 
     function handleSelectionOnLoad(){
-        document.getElementById('id_select').disabled=false;
+        document.getElementById('id_vehType').disabled=false;
         document.getElementById('id_category').disabled=false;
         document.getElementById('id_tons').disabled=false;
 
-        if(document.getElementById('id_select').value =="c"){
+        if(document.getElementById('id_vehType').value =="c"){
             document.getElementById('id_tons').disabled=true;
         }
-        else if(document.getElementById('id_select').value =="b"){
+        else if(document.getElementById('id_vehType').value =="b"){
             document.getElementById('id_tons').disabled=true;
         }
-        else if(document.getElementById('id_select').value =="l"){
+        else if(document.getElementById('id_vehType').value =="l"){
             document.getElementById('id_category').disabled=true;
         }
     }

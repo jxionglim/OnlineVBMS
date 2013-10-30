@@ -60,6 +60,19 @@ class RegisterForm(ModelForm):
         model = Customer
         exclude = ('user', 'cusId')
 
+    def __init__(self, *args, **kw):
+        super(ModelForm, self).__init__(*args, **kw)
+        self.fields.keyOrder = [
+            'email',
+            'passwd',
+            'firstName',
+            'lastName',
+            'streetName',
+            'zipcode',
+            'contactNo',
+            'cSerialNo',
+            'cExpDate']
+
     def clean_email(self):
         email = self.cleaned_data.get('email', '')
         if dbaccess.getCustByEmail(email):

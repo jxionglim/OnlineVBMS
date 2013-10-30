@@ -132,7 +132,7 @@ class AddDriverForm(ModelForm):
         return drivingClass
 
 class AddVehicleForm(forms.Form):
-    select = forms.ChoiceField(choices=[('', "Please select an option"),('c', "Car"),('b','Bus'),('l', 'Lorry')], label="Type of Vehicle", widget=forms.Select(attrs={"onChange": 'handleSelection(value)'}))
+    vehType = forms.ChoiceField(choices=[('', "Please select an option"),('c', "Car"),('b','Bus'),('l', 'Lorry')], label="Type of Vehicle", widget=forms.Select(attrs={"onChange": 'handleSelection(value)'}))
     carplateNo = forms.CharField(max_length=8, label="Carplate Number", validators=[validateBlank])
     iuNo = forms.IntegerField(label="IU Number")
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
@@ -148,15 +148,15 @@ class AddVehicleForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(AddVehicleForm, self).clean()
-        select = self.cleaned_data.get('select')
+        vehType = self.cleaned_data.get('vehType')
         category = self.cleaned_data.get('category')
         tons = self.cleaned_data.get('tons')
 
-        if (select == 'c' and category != "sedan") and (select == 'c' and category != "mpv") and (select == 'c' and category != 'luxury'):
+        if (vehType == 'c' and category != "sedan") and (vehType == 'c' and category != "mpv") and (vehType == 'c' and category != 'luxury'):
             raise forms.ValidationError("Format: sedan/mpv/luxury")
-        elif (select == 'b' and category != "bus") and (select == 'b' and category != "mini") and (select == 'b' and category != 'coach'):
+        elif (vehType == 'b' and category != "bus") and (vehType == 'b' and category != "mini") and (vehType == 'b' and category != 'coach'):
             raise forms.ValidationError("Format: mini/bus/coach")
-        elif (select == 'l' and tons != 1) and (select == 'l' and tons != 3) and (select == 'l' and tons != 5):
+        elif (vehType == 'l' and tons != 1) and (vehType == 'l' and tons != 3) and (vehType == 'l' and tons != 5):
             raise forms.ValidationError("Format: 1/3/5")
         return cleaned_data
 
