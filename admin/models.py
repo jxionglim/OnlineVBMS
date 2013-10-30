@@ -102,7 +102,7 @@ class AddCompanyForm(ModelForm):
 class AddDriverForm(ModelForm):
     firstName = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
     lastName = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
-    drivingClass = forms.CharField(max_length=2, label="Driving Class License", help_text="Format: 3, 3a ...")
+    drivingClass = forms.CharField(max_length=2, label="Driving Class License")
     driverContactNo = forms.IntegerField(label="Contact Number")
 
     class Meta:
@@ -115,39 +115,43 @@ class AddDriverForm(ModelForm):
             raise forms.ValidationError("Contact number must be a 8 digit number starting with 8 or 9")
         return driverContactNo
 
+    def clean_drivingClass(self):
+        drivingClass = self.cleaned_data.get('drivingClass', '')
+        if(drivingClass != '3' or drivingClass != '3a' or drivingClass != '4' or drivingClass != '4a' or drivingClass != '5'):
+            raise forms.ValidationError("Format: 3/3a/4/4a/5")
+        return drivingClass
 
-class AddVehicleForm(ModelForm):
+class AddVehicleForm(forms.Form):
+    select = forms.ChoiceField(choices=[('', "Please select an option"),('c', "Car"),('b','Bus'),('l', 'Lorry')], label="Type of Vehicle", widget=forms.Select(attrs={"onChange": 'handleSelection(value)'}))
     carplateNo = forms.CharField(max_length=8, label="Carplate Number", validators=[validateBlank])
     iuNo = forms.IntegerField(label="IU Number")
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
     capacity = forms.IntegerField(label="Sitting Capacity")
-    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Format: manual/auto (Note: For 5 Ton vehicles, Transmission Type is Manual by default.)")
+    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Note: For 5 Ton vehicles, Transmission Type is Manual by default.")
+    category = forms.CharField(max_length=9, label="Category", validators=[validateBlank], required=False)
+    tons = forms.IntegerField(label="Tons", required=False)
 
-    class Meta:
-        model = Vehicle
-        exclude = ['coyId', 'vehType', 'drivingClass']
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(AddVehicleForm, self).__init__(*args, **kwargs)
 
+    def clean(self):
+        cleaned_data = super(AddVehicleForm, self).clean()
+        select = self.cleaned_data.get('select')
+        category = self.cleaned_data.get('category')
+        tons = self.cleaned_data.get('tons')
 
-class AddCarForm(ModelForm):
-    category = forms.CharField(max_length=9, label="Category", validators=[validateBlank])
+        if (select == 'c' and category != "sedan") and (select == 'c' and category != "mpv") and (select == 'c' and category != 'luxury'):
+            raise forms.ValidationError("Format: sedan/mpv/luxury")
+        elif (select == 'b' and category != "bus") and (select == 'b' and category != "mini") and (select == 'b' and category != 'coach'):
+            raise forms.ValidationError("Format: mini/bus/coach")
+        elif (select == 'l' and tons != 1) and (select == 'l' and tons != 3) and (select == 'l' and tons != 5):
+            raise forms.ValidationError("Format: 1/3/5")
+        return cleaned_data
 
-    class Meta:
-        model = Car
-        exclude = ['carplateNo']
-
-
-class AddBusForm(ModelForm):
-    category = forms.CharField(max_length=9, label="Category", validators=[validateBlank])
-
-    class Meta:
-        model = Bus
-        exclude = ['carplateNo']
-
-
-class AddLorryForm(ModelForm):
-    tons = forms.IntegerField(label="Tons")
-
-    class Meta:
-        model = Lorry
-        exclude = ['carplateNo']
+    def clean_transType(self):
+        transType = self.cleaned_data.get('transType', '')
+        if transType != "manual" and transType != "auto":
+            raise forms.ValidationError("Format: manual/auto")
+        return transType

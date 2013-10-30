@@ -2,7 +2,7 @@ import dbaccess, urlparse
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm, AddCarForm, AddBusForm, AddLorryForm
+from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm
 from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
@@ -76,7 +76,7 @@ def registerDriver(request):
 def registerVehicle(request):
     status = 'normal'
     if request.method == 'POST':
-        form = AddVehicleForm(request.POST)
+        form = AddVehicleForm(request, request.POST)
         if form.is_valid():
             drivingclass = None
             transType = None
@@ -145,7 +145,7 @@ def registerVehicle(request):
             else:
                 return HttpResponseRedirect('/admin/addVehicle')
     else:
-        form = AddVehicleForm()
+        form = AddVehicleForm(request)
         if request.get_full_path().__contains__('id'):
             request.session['coyId'] = request.get_full_path().split('=')[1]
             status = 'redirect'
@@ -158,9 +158,6 @@ def registerVehicle(request):
         coyId = None
     return render_to_response('admin/addVehicle.html', {
         'form': form,
-        'cform': AddCarForm,
-        'bform': AddBusForm,
-        'lform': AddLorryForm,
         'status': status,
         'coyId': coyId
     }, context_instance=RequestContext(request))

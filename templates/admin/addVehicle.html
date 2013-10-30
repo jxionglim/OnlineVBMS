@@ -1,31 +1,22 @@
-{% block content %}
-<form action="" method="post">
-    <h3>Add a new Vehicle</h3>
-    Type of Vehicle:
-    <select id="select" name="vehType" onChange="handleSelection(value)">
-    <option selected>Please select one </option>
-    <option value="c">Car</option>
-    <option value="b">Bus</option>
-    <option value="l">Lorry</option>
-    </select>
-    {{ form.as_p }}
-    <div id="div1"></div>
-    <br>
-    <input type="submit" value="Add New" />
-</form>
-{% if status == 'normal' %}
-    <input type="submit" value="Finish"
-    onclick="window.location='/admin/viewCompany';" />
-{% elif status == 'redirect' %}
-    <input type="submit" value="Finish"
-    onclick="window.location='/admin/viewVehicle/id={{ coyId }}';" />
-{% endif %}
-{% endblock %}
-
-
-
-
-
+<!DOCTYPE html>
+<html>
+    <body>
+        {% block content %}
+        <form action="" method="post" onload="handleSelectionOnLoad()">
+            <h3>Add a new Vehicle</h3>
+            {{ form.as_p }}
+            <input type="submit" value="Add New" />
+        </form>
+        {% if status == 'normal' %}
+            <input type="submit" value="Finish"
+            onclick="window.location='/admin/viewCompany';" />
+        {% elif status == 'redirect' %}
+            <input type="submit" value="Finish"
+            onclick="window.location='/admin/viewVehicle/id={{ coyId }}';" />
+        {% endif %}
+        {% endblock %}
+    </body>
+</html>
 
 
 
@@ -41,8 +32,43 @@
 
 
 <script type="text/javascript">
+    function handleSelection(choice){
+        document.getElementById('id_select').disabled=false;
+        document.getElementById('id_category').disabled=false;
+        document.getElementById('id_tons').disabled=false;
+
+        if(choice =="c"){
+            document.getElementById('id_tons').disabled=true;
+        }
+        else if(choice =="b"){
+            document.getElementById('id_tons').disabled=true;
+        }
+        else if(choice =="l"){
+            document.getElementById('id_category').disabled=true;
+        }
+    }
+
+    function handleSelectionOnLoad(){
+        document.getElementById('id_select').disabled=false;
+        document.getElementById('id_category').disabled=false;
+        document.getElementById('id_tons').disabled=false;
+
+        if(document.getElementById('id_select').value =="c"){
+            document.getElementById('id_tons').disabled=true;
+        }
+        else if(document.getElementById('id_select').value =="b"){
+            document.getElementById('id_tons').disabled=true;
+        }
+        else if(document.getElementById('id_select').value =="l"){
+            document.getElementById('id_category').disabled=true;
+        }
+    }
+</script>
+
+
+<!--<script type="text/javascript">
 function handleSelection(choice) {
-    document.getElementById('select').disabled=false;
+    document.getElementById('id_select').disabled=false;
     var thediv=document.getElementById('div1');
     if (choice=="c") {
         var extras=document.createElement('div');
@@ -63,4 +89,28 @@ function handleSelection(choice) {
         thediv.appendChild(extras);
     }
 }
-</script>
+
+function handleSelectionOnLoad() {
+    alert(document.getElementById('id_select').value);
+    document.getElementById('id_select').disabled=false;
+    var thediv=document.getElementById('div1');
+    if (document.getElementById('id_select').value=="c") {
+        var extras=document.createElement('div');
+        document.getElementById('div1').innerHTML="";
+        extras.innerHTML='{{ cform.as_p }}'
+        thediv.appendChild(extras);
+    }
+    if (document.getElementById('id_select').value=="b"){
+        var extras=document.createElement('div');
+        document.getElementById('div1').innerHTML="";
+        extras.innerHTML='{{ bform.as_p }}'
+        thediv.appendChild(extras);
+    }
+    if (document.getElementById('id_select').value=="l") {
+        var extras=document.createElement('div');
+        document.getElementById('div1').innerHTML="";
+        extras.innerHTML='{{ lform.as_p }}'
+        thediv.appendChild(extras);
+    }
+}
+</script>-->
