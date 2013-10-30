@@ -71,14 +71,24 @@ class Bus(models.Model):
 class AddCompanyForm(ModelForm):
     coyName = forms.CharField(max_length=256, label="Company Name", validators=[validateBlank])
     email = forms.EmailField(max_length=256, label="Email")
-    faxNo = forms.IntegerField(label="Fax Number")
     coyContactNo = forms.IntegerField(label="Contact Number")
-    zipcode = forms.IntegerField(label="Postal Code")
+    faxNo = forms.IntegerField(label="Fax Number")
     streetName = forms.CharField(max_length=256, label="Street Name")
+    zipcode = forms.IntegerField(label="Postal Code")
 
     class Meta:
         model = Company
         exclude = ['coyId', 'rating']
+
+    def __init__(self, *args, **kw):
+        super(ModelForm, self).__init__(*args, **kw)
+        self.fields.keyOrder = [
+            'coyName',
+            'email',
+            'streetName',
+            'zipcode',
+            'coyContactNo',
+            'faxNo']
 
     def clean_coyContactNo(self):
         coyContactNo = self.cleaned_data.get('coyContactNo', '')
@@ -117,7 +127,7 @@ class AddDriverForm(ModelForm):
 
     def clean_drivingClass(self):
         drivingClass = self.cleaned_data.get('drivingClass', '')
-        if(drivingClass != '3' or drivingClass != '3a' or drivingClass != '4' or drivingClass != '4a' or drivingClass != '5'):
+        if(drivingClass != '3' and drivingClass != '3a' and drivingClass != '4' and drivingClass != '4a' and drivingClass != '5'):
             raise forms.ValidationError("Format: 3/3a/4/4a/5")
         return drivingClass
 
