@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def registerCompany(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
         form = AddCompanyForm(request.POST)
         if form.is_valid():
@@ -31,6 +33,8 @@ def registerCompany(request):
 
 @csrf_exempt
 def registerDriver(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     status = 'normal'
     if request.method == 'POST':
         form = AddDriverForm(request.POST)
@@ -70,6 +74,8 @@ def registerDriver(request):
 
 @csrf_exempt
 def registerVehicle(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     status = 'normal'
     if request.method == 'POST':
         form = AddVehicleForm(request, request.POST)
@@ -154,6 +160,8 @@ def registerVehicle(request):
 
 @csrf_exempt
 def viewCompany(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     if 'coyId' in request.session:
         del request.session['coyId']
     allCoy = dbaccess.getCompanies()
@@ -163,6 +171,8 @@ def viewCompany(request):
 
 @csrf_exempt
 def viewDriver(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     if 'coyId' in request.session:
         del request.session['coyId']
     coyId = request.get_full_path().split('=')[1]
@@ -174,6 +184,8 @@ def viewDriver(request):
 
 @csrf_exempt
 def viewVehicle(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     if 'coyId' in request.session:
         del request.session['coyId']
     coyId = request.get_full_path().split('=')[1]
@@ -192,6 +204,8 @@ def viewVehicle(request):
 
 @csrf_exempt
 def editCompany(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     coyRow = dbaccess.getCompanyById(request.get_full_path().split('=')[1])
     if request.method == 'POST':
         form = AddCompanyForm(request.POST)
@@ -222,6 +236,8 @@ def editCompany(request):
 
 @csrf_exempt
 def editDriver(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     driverRow = dbaccess.getDriverByDid(request.get_full_path().split('=')[1])
     if request.method == 'POST':
         form = AddDriverForm(request.POST)
@@ -248,17 +264,23 @@ def editDriver(request):
 
 @csrf_exempt
 def deleteCompany(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     dbaccess.deleteCompany(request.get_full_path().split('=')[1])
     return HttpResponseRedirect('/admin/viewCompany')
 
 @csrf_exempt
 def deleteDriver(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     coyId = dbaccess.getDriverByDid(request.get_full_path().split('=')[1])[5]
     dbaccess.deleteDriver(request.get_full_path().split('=')[1])
     return HttpResponseRedirect('/admin/viewDriver/id=' + str(coyId))
 
 @csrf_exempt
 def deleteVehicle(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
     coyId = dbaccess.getCoyIdByCarplateNo(request.get_full_path().split('=')[1])
     dbaccess.deleteVehicle(request.get_full_path().split('=')[1])
     return HttpResponseRedirect('/admin/viewVehicle/id=' + str(coyId))
