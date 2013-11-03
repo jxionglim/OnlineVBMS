@@ -2,7 +2,7 @@ import dbaccess
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from userprofile.models import RegisterForm, LoginForm, ProfileForm
+from userprofile.models import RegisterForm, LoginForm, ProfileForm, AdminCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import logout as auth_logout
 from django.utils.datastructures import SortedDict
@@ -17,6 +17,25 @@ def home(request):
     }, context_instance=RequestContext(request))
 
 
+def addAdmin(request):
+    if not request.user.is_authenticated() or not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
+    if request.method == 'POST':
+        form = AdminCreationForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(request.POST['email'], None, request.POST['password'])
+            user.is_superuser = 1
+            user.is_staff = 1
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.save()
+            return HttpResponseRedirect('/home')
+    else:
+        form = AdminCreationForm()
+    return render_to_response('userprofile/addAdmin.html', {
+        'form': form,
+    }, context_instance=RequestContext(request))
+
 def register(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home')
@@ -24,6 +43,8 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = User.objects.create_user(request.POST['email'], None, request.POST['passwd'])
+            user.first_name = request.POST['firstName']
+            user.last_name = request.POST['lastName']
             user.save()
             print dbaccess.getMaxCustomerId()
             cusId = dbaccess.getMaxCustomerId()+1

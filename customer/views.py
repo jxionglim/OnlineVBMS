@@ -439,7 +439,7 @@ def addTrip(request):
                     jobId,
                     cusId
                 ]
-
+                print len(params)
                 dbaccess.insertTrip(params)
                 print "OVERALL A SUCCESS"
                 for x in finalRResource:

@@ -157,3 +157,27 @@ class LoginForm(forms.Form):
                 else:
                     raise forms.ValidationError("Invalid credientials")
         return cleaned_data
+
+class AdminCreationForm(ModelForm):
+    email = forms.EmailField(max_length=256, label="Email")
+    password = forms.CharField(widget=forms.PasswordInput(), max_length=256, label="Password", min_length=8)
+    first_name = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
+    last_name = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'password', 'email')
+
+    def __init__(self, *args, **kw):
+        super(ModelForm, self).__init__(*args, **kw)
+        self.fields.keyOrder = [
+            'email',
+            'password',
+            'first_name',
+            'last_name']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        if dbaccess.getCustByEmail(email):
+            raise forms.ValidationError("This email is already registered")
+        return email

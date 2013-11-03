@@ -72,7 +72,7 @@ body, html {
     width:100%;
     margin:0 auto;
     padding:0;
-    background: #010101 url("/images/background.png") repeat-x top left;
+    background: #010101 url("/static/images/background.png") repeat-x top left;
 }
 
 /* page wrappers **************************************************************/
@@ -96,7 +96,7 @@ body, html {
 
 /* main holder */
 .mainHolder {
-    background: url("/images/container.png") no-repeat scroll left top transparent;
+    background: url("/static/images/container.png") no-repeat scroll left top transparent;
     display: block;
     height: 416px;
     position: relative;
@@ -132,7 +132,7 @@ body, html {
 }
 
 .trafficLight {
-    background: url("/images/traffic_light_red.png") no-repeat scroll left top transparent;
+    background: url("/static/images/traffic_light_red.png") no-repeat scroll left top transparent;
     clear: both;
     display: block;
     float: left;
@@ -143,7 +143,7 @@ body, html {
 }
 
 .trafficLightRed {
-    background:url("/images/traffic_light_red.png") top left no-repeat;
+    background:url("/static/images/traffic_light_red.png") top left no-repeat;
 }
 
 footer {
