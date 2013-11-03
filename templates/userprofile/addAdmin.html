@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Add Company</title>
+    <title>Add Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
@@ -20,17 +20,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="/home">VBMS</a>
+            <a class="brand" href="/home">VMBS</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
-                    {% if request.user.is_superuser == True %}<li class="active"><a href="/admin/addCompany">Register Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
                     {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
                 </ul>
                 <form class="navbar-form pull-right">
                     <ul class="nav">
-                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == True %}<li class="active"><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
                         {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
                         {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
                         <a class="brand" href="/logout">Logout</a>
@@ -47,17 +47,17 @@
             <div class="container-fluid">
                 <div class="row-fluid">
                     <div class="hero-unit">
-                        <legend><strong>Company Information</strong></legend>
+                        <legend><strong>Personal Information</strong></legend>
                         {% for fields in form %}
-                            <div class="control-group">
-                                <label class="control-label">{{ fields.label }}</label>
-                                <div class="controls">
-                                    {{ fields }} {% for error in fields.errors %} <span class="help-inline"><small><p class="text-error">{{ error }}</p></small></span> {% endfor %}
+                                <div class="control-group">
+                                    <label class="control-label">{{ fields.label }}</label>
+                                    <div class="controls">
+                                        {{ fields }} {% for error in fields.errors %} <span class="help-inline"><small><p class="text-error">{{ error }}</p></small></span> {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
                         {% endfor %}
                         <div class="row">
-                            <div class="span1 offset4"><button class="btn btn-small btn-info" type="submit">Update</button></div>
+                            <div class="span1 offset4"><button class="btn btn-small btn-info" type="submit">Register</button></div>
                         </div>
                     </div>
                 </div>

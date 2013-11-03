@@ -32,14 +32,14 @@ def validateCustomer(params):
 
 def getCustIdByUserId(id):
     cursor = connection.cursor()
-    query = "SELECT cusId FROM customer where user_id=%s"
+    query = "SELECT cusId FROM customer WHERE user_id=%s"
     cursor.execute(query, [id])
     return cursor.fetchone()[0]
 
 
 def getCustInfoById(id):
     cursor = connection.cursor()
-    query = "SELECT * FROM customer where cusId=%s"
+    query = "SELECT * FROM customer WHERE cusId=%s"
     cursor.execute(query, [id])
     row = cursor.fetchone()
     return row
@@ -47,6 +47,6 @@ def getCustInfoById(id):
 
 def getCustByEmail(email):
     cursor = connection.cursor()
-    query = "SELECT count(*) FROM customer where email=%s"
+    query = "SELECT COUNT(*) FROM auth_user WHERE username=%s"
     cursor.execute(query, [email])
     return True if cursor.fetchone()[0] == 1 else False

@@ -11,3 +11,5 @@ urlpatterns = patterns('',
     (r'^analysis/', include('analysis.urls')),
     )
 
+handler404 = 'error.views.my_404_view'
+handler500 = 'error.views.my_505_view'
