@@ -1,89 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>View Vehicle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VMBS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Add Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="hero-unit">
+                    <legend><strong>Vehicle Details</strong>&nbsp
+                        <input type="image" src="/static/images/add-icon.png" onclick="window.location='/admin/addVehicle/id={{ coyId }}';">
+                    </legend>
+                    {% if carStatus == True %}
+                        <strong>Cars</strong>
+                        <table class="table table-condensed table-hover table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <td style="text-align: center">Carplate No</td>
+                                <td style="text-align: center">iuNo</td>
+                                <td style="text-align: center">Manufacturer</td>
+                                <td style="text-align: center">Model</td>
+                                <td style="text-align: center">Capacity</td>
+                                <td style="text-align: center">Transmission Type</td>
+                                <td style="text-align: center">Category</td>
+                                <td style="text-align: center">Action</td>
+                            </tr>
+                            </thead>
+                            {% for car in cars %}
+                                <tr>
+                                    <td style="text-align: center">{{ car.0 }}</td>
+                                    <td style="text-align: center">{{ car.1 }}</td>
+                                    <td style="text-align: center">{{ car.2 }}</td>
+                                    <td style="text-align: center">{{ car.3 }}</td>
+                                    <td style="text-align: center">{{ car.4 }}</td>
+                                    <td style="text-align: center">{{ car.5 }}</td>
+                                    <td style="text-align: center">{{ car.6 }}</td>
+                                    <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ car.0 }}';"></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                    {% if busStatus == True %}
+                        <strong>Buses</strong>
+                        <table class="table table-condensed table-hover table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <td style="text-align: center">Carplate No</td>
+                                <td style="text-align: center">iuNo</td>
+                                <td style="text-align: center">Manufacturer</td>
+                                <td style="text-align: center">Model</td>
+                                <td style="text-align: center">Capacity</td>
+                                <td style="text-align: center">Transmission Type</td>
+                                <td style="text-align: center">Category</td>
+                                <td style="text-align: center">Action</td>
+                            </tr>
+                            </thead>
+                            {% for bus in buses %}
+                                <tr>
+                                    <td style="text-align: center">{{ bus.0 }}</td>
+                                    <td style="text-align: center">{{ bus.1 }}</td>
+                                    <td style="text-align: center">{{ bus.2 }}</td>
+                                    <td style="text-align: center">{{ bus.3 }}</td>
+                                    <td style="text-align: center">{{ bus.4 }}</td>
+                                    <td style="text-align: center">{{ bus.5 }}</td>
+                                    <td style="text-align: center">{{ bus.6 }}</td>
+                                    <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ bus.0 }}';"></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                    {% if lorryStatus == True %}
+                        <strong>Lorries</strong>
+                        <table class="table table-condensed table-hover table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <td style="text-align: center">Carplate No</td>
+                                <td style="text-align: center">iuNo</td>
+                                <td style="text-align: center">Manufacturer</td>
+                                <td style="text-align: center">Model</td>
+                                <td style="text-align: center">Capacity</td>
+                                <td style="text-align: center">Transmission Type</td>
+                                <td style="text-align: center">Tons</td>
+                                <td style="text-align: center">Action</td>
+                            </tr>
+                            </thead>
+                            {% for lorry in lorries %}
+                                <tr>
+                                    <td style="text-align: center">{{ lorry.0 }}</td>
+                                    <td style="text-align: center">{{ lorry.1 }}</td>
+                                    <td style="text-align: center">{{ lorry.2 }}</td>
+                                    <td style="text-align: center">{{ lorry.3 }}</td>
+                                    <td style="text-align: center">{{ lorry.4 }}</td>
+                                    <td style="text-align: center">{{ lorry.5 }}</td>
+                                    <td style="text-align: center">{{ lorry.6 }}</td>
+                                    <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ lorry.0 }}';"></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
 {% block content %}
-{% if carStatus == True %}
-<h3>Cars</h3>
-<table>
-    <tr>
-        <td width="150">Carplate No</td>
-        <td width="150">iuNo</td>
-        <td width="150">Manufacturer</td>
-        <td width="150">Model</td>
-        <td width="150">Capacity</td>
-        <td width="150">Transmission Type</td>
-        <td width="150">Category</td>
-    </tr>
-    {% for car in cars %}
-        <tr>
-        {% for attribute in car %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        {% for attribute in car %}
-            {% if forloop.counter == 1 %}
-                <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
-<br>
-{% endif %}
+    {% if carStatus == True %}
+        <h3>Cars</h3>
+        <table>
+            <tr>
+                <td width="150">Carplate No</td>
+                <td width="150">iuNo</td>
+                <td width="150">Manufacturer</td>
+                <td width="150">Model</td>
+                <td width="150">Capacity</td>
+                <td width="150">Transmission Type</td>
+                <td width="150">Category</td>
+            </tr>
+            {% for car in cars %}
+                <tr>
+                    {% for attribute in car %}
+                        <td width="150">{{ attribute }}</td>
+                    {% endfor %}
+                    {% for attribute in car %}
+                        {% if forloop.counter == 1 %}
+                            <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+    {% endif %}
 
-{% if busStatus == True %}
-<h3>Buses</h3>
-<table>
-    <tr>
-        <td width="150">Carplate No</td>
-        <td width="150">iuNo</td>
-        <td width="150">Manufacturer</td>
-        <td width="150">Model</td>
-        <td width="150">Capacity</td>
-        <td width="150">Transmission Type</td>
-        <td width="150">Category</td>
-    </tr>
-    {% for bus in buses %}
-        <tr>
-        {% for attribute in bus %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        {% for attribute in bus %}
-            {% if forloop.counter == 1 %}
-                <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
-<br>
-{% endif %}
+    {% if busStatus == True %}
+        <h3>Buses</h3>
+        <table>
+            <tr>
+                <td width="150">Carplate No</td>
+                <td width="150">iuNo</td>
+                <td width="150">Manufacturer</td>
+                <td width="150">Model</td>
+                <td width="150">Capacity</td>
+                <td width="150">Transmission Type</td>
+                <td width="150">Category</td>
+            </tr>
+            {% for bus in buses %}
+                <tr>
+                    {% for attribute in bus %}
+                        <td width="150">{{ attribute }}</td>
+                    {% endfor %}
+                    {% for attribute in bus %}
+                        {% if forloop.counter == 1 %}
+                            <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+    {% endif %}
 
-{% if lorryStatus == True %}
-<h3>Lorries</h3>
-<table>
-    <tr>
-        <td width="150">Carplate No</td>
-        <td width="150">iuNo</td>
-        <td width="150">Manufacturer</td>
-        <td width="150">Model</td>
-        <td width="150">Capacity</td>
-        <td width="150">Transmission Type</td>
-        <td width="150">Tons</td>
-    </tr>
-    {% for lorry in lorries %}
-        <tr>
-        {% for attribute in lorry %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        {% for attribute in lorry %}
-            {% if forloop.counter == 1 %}
-                <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
-<br>
-{% endif %}
+    {% if lorryStatus == True %}
+        <h3>Lorries</h3>
+        <table>
+            <tr>
+                <td width="150">Carplate No</td>
+                <td width="150">iuNo</td>
+                <td width="150">Manufacturer</td>
+                <td width="150">Model</td>
+                <td width="150">Capacity</td>
+                <td width="150">Transmission Type</td>
+                <td width="150">Tons</td>
+            </tr>
+            {% for lorry in lorries %}
+                <tr>
+                    {% for attribute in lorry %}
+                        <td width="150">{{ attribute }}</td>
+                    {% endfor %}
+                    {% for attribute in lorry %}
+                        {% if forloop.counter == 1 %}
+                            <td width="150"><a href="/admin/deleteVehicle/v_id={{ attribute }}">Delete</a></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+    {% endif %}
 
-<a href="/admin/addVehicle/id={{ coyId }}">Add a new Vehicle</a>
-<br>
-<a href="/admin/viewCompany">Back</a>
+    <a href="/admin/addVehicle/id={{ coyId }}">Add a new Vehicle</a>
+    <br>
+    <a href="/admin/viewCompany">Back</a>
 {% endblock %}

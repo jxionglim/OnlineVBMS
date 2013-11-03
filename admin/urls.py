@@ -1,7 +1,6 @@
 from django.conf.urls import *
 
 urlpatterns = patterns('admin.views',
-    (r'^home$', 'home'),
     (r'^addCompany$', 'registerCompany'),
     (r'^addDriver$', 'registerDriver'),
     (r'^addDriver/id=\d+?$', 'registerDriver'),

@@ -90,6 +90,12 @@ class AddCompanyForm(ModelForm):
             'coyContactNo',
             'faxNo']
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        if dbaccess.checkUniqueEmail(email) is False:
+            raise forms.ValidationError("Email already exist")
+        return email
+
     def clean_coyContactNo(self):
         coyContactNo = self.cleaned_data.get('coyContactNo', '')
         if re.search('^(9|8|6)\d{7}$',str(coyContactNo)) == None:
@@ -112,7 +118,7 @@ class AddCompanyForm(ModelForm):
 class AddDriverForm(ModelForm):
     firstName = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
     lastName = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
-    drivingClass = forms.CharField(max_length=2, label="Driving Class License")
+    drivingClass = forms.ChoiceField(choices=[('', "Please select an option"),('3', "3"),('3a','3a'),('4', '4'),('4a', '4a'),('5', '5')], label="Driving Class License")
     driverContactNo = forms.IntegerField(label="Contact Number")
 
     class Meta:
@@ -125,11 +131,6 @@ class AddDriverForm(ModelForm):
             raise forms.ValidationError("Contact number must be a 8 digit number starting with 8 or 9")
         return driverContactNo
 
-    def clean_drivingClass(self):
-        drivingClass = self.cleaned_data.get('drivingClass', '')
-        if(drivingClass != '3' and drivingClass != '3a' and drivingClass != '4' and drivingClass != '4a' and drivingClass != '5'):
-            raise forms.ValidationError("Format: 3/3a/4/4a/5")
-        return drivingClass
 
 class AddVehicleForm(forms.Form):
     vehType = forms.ChoiceField(choices=[('', "Please select an option"),('c', "Car"),('b','Bus'),('l', 'Lorry')], label="Type of Vehicle", widget=forms.Select(attrs={"onChange": 'handleSelection(value)'}))
@@ -138,13 +139,35 @@ class AddVehicleForm(forms.Form):
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
     capacity = forms.IntegerField(label="Sitting Capacity")
-    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Note: For 5 Ton vehicles, Transmission Type is Manual by default.")
+    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Note: For lorry type vehicles, Transmission Type is Manual by default.")
     category = forms.CharField(max_length=9, label="Category", validators=[validateBlank], required=False)
     tons = forms.IntegerField(label="Tons", required=False)
 
     def __init__(self, request, *args, **kwargs):
         self.request = request
         super(AddVehicleForm, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = [
+            'vehType',
+            'carplateNo',
+            'iuNo',
+            'manufacturer',
+            'model',
+            'capacity',
+            'transType',
+            'category',
+            'tons']
+
+    def clean_carplateNo(self):
+        carplateNo = self.cleaned_data.get('carplateNo', '')
+        if dbaccess.checkUniqueCarplateNo(carplateNo) is False:
+            raise forms.ValidationError("Carplate Number already exist")
+        return carplateNo
+
+    def clean_iuNo(self):
+        iuNo = self.cleaned_data.get('iuNo', '')
+        if dbaccess.checkUniqueIuNo(iuNo) is False:
+            raise forms.ValidationError("IU Number already exist")
+        return iuNo
 
     def clean(self):
         cleaned_data = super(AddVehicleForm, self).clean()
@@ -153,11 +176,14 @@ class AddVehicleForm(forms.Form):
         tons = self.cleaned_data.get('tons')
 
         if (vehType == 'c' and category != "sedan") and (vehType == 'c' and category != "mpv") and (vehType == 'c' and category != 'luxury'):
-            raise forms.ValidationError("Format: sedan/mpv/luxury")
+            msg = "Format: sedan/mpv/luxury"
+            self._errors["category"] = self.error_class([msg])
         elif (vehType == 'b' and category != "bus") and (vehType == 'b' and category != "mini") and (vehType == 'b' and category != 'coach'):
-            raise forms.ValidationError("Format: mini/bus/coach")
+            msg = "Format: mini/bus/coach"
+            self._errors["category"] = self.error_class([msg])
         elif (vehType == 'l' and tons != 1) and (vehType == 'l' and tons != 3) and (vehType == 'l' and tons != 5):
-            raise forms.ValidationError("Format: 1/3/5")
+            msg = "Format: 1/3/5"
+            self._errors["tons"] = self.error_class([msg])
         return cleaned_data
 
     def clean_transType(self):

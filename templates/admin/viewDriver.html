@@ -1,28 +1,92 @@
-{% block content %}
-<table>
-    <tr>
-        <td width="150">S/N</td>
-        <td width="150">First Name</td>
-        <td width="150">Last Name</td>
-        <td width="150">Contact Number</td>
-        <td width="150">Driving Class</td>
-        <td width="150">Action</td>
-    </tr>
-    {% for driver in drivers %}
-        <tr>
-        {% for attribute in driver %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        {% for attribute in driver %}
-            {% if forloop.counter == 1 %}
-                <td width="150"><a href="/admin/editDriver/d_id={{ attribute }}">Edit</a>&nbsp&nbsp<a href="/admin/deleteDriver/d_id={{ attribute }}">Delete</a></td>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
-<br>
-<a href="/admin/addDriver/id={{ coyId }}">Add a new Driver</a>
-<br>
-<a href="/admin/viewCompany">Back</a>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>View Driver</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VMBS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Add Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="hero-unit">
+                    <legend><strong>Driver Details</strong>&nbsp
+                        <input type="image" src="/static/images/add-icon.png" onclick="window.location='/admin/addDriver/id={{ coyId }}';">
+                    </legend>
+                    <table class="table table-condensed table-hover table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <td style="text-align: center">S/N</td>
+                            <td style="text-align: center">First Name</td>
+                            <td style="text-align: center">Last Name</td>
+                            <td style="text-align: center">Contact Number</td>
+                            <td style="text-align: center">Driving Class</td>
+                            <td style="text-align: center">Action</td>
+                        </tr>
+                        </thead>
+                        {% for driver in drivers %}
+                            <tr>
+                                <td style="text-align: center">{{ driver.0 }}</td>
+                                <td style="text-align: center">{{ driver.1 }}</td>
+                                <td style="text-align: center">{{ driver.2 }}</td>
+                                <td style="text-align: center">{{ driver.3 }}</td>
+                                <td style="text-align: center">{{ driver.4 }}</td>
+                                <td style="text-align: center"><input type="image" src="/static/images/edit-icon.png" onclick="window.location='/admin/editDriver/d_id={{ driver.0 }}';">&nbsp&nbsp<input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteDriver/d_id={{ driver.0 }}';"></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>

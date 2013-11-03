@@ -17,6 +17,14 @@ def getMaxDriverId():
     return row[0] if row[0] is not None else 0
 
 
+def checkUniqueEmail(email):
+    cursor = connection.cursor()
+    query = "SELECT * FROM Company WHERE email=%s"
+    cursor.execute(query, [email])
+    row = cursor.fetchall()
+    return False if row is not None else True
+
+
 def insertCompany(params):
     cursor = connection.cursor()
     query = "INSERT INTO Company VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -59,6 +67,22 @@ def deleteDriver(id):
     query = "DELETE FROM DRIVER WHERE driverId=%s"
     cursor.execute(query, [id])
     transaction.commit_unless_managed()
+
+
+def checkUniqueCarplateNo(carplateNo):
+    cursor = connection.cursor()
+    query = "SELECT * FROM Vehicle WHERE carplateNo=%s"
+    cursor.execute(query, [carplateNo])
+    row = cursor.fetchall()
+    return False if row is not None else True
+
+
+def checkUniqueIuNo(iuNo):
+    cursor = connection.cursor()
+    query = "SELECT * FROM Vehicle WHERE iuNo=%s"
+    cursor.execute(query, [iuNo])
+    row = cursor.fetchall()
+    return False if row is not None else True
 
 
 def insertVehicle(params):

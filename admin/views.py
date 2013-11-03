@@ -5,10 +5,6 @@ from django.shortcuts import render_to_response
 from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm
 from django.views.decorators.csrf import csrf_exempt
 
-def home(request):
-    return render_to_response('admin/home.html', {
-    }, context_instance=RequestContext(request))
-
 @csrf_exempt
 def registerCompany(request):
     if request.method == 'POST':
@@ -60,7 +56,7 @@ def registerDriver(request):
             status = 'redirect'
         else:
             if 'coyId' not in request.session:
-                return HttpResponseRedirect('/admin/home')
+                return HttpResponseRedirect('/home')
         print(status)
     if 'coyId' in request.session:
         coyId = request.session['coyId']
@@ -95,18 +91,12 @@ def registerVehicle(request):
                     drivingclass = '4a'
                     transType = 'auto'
             elif request.POST['vehType'] == 'l':
-                if request.POST['tons'] == '1' and request.POST['transType'] == 'manual':
+                if request.POST['tons'] == '1':
                     drivingclass = '3'
                     transType = 'manual'
-                elif request.POST['tons'] == '1' and request.POST['transType'] == 'auto':
-                    drivingclass = '3a'
-                    transType = 'auto'
-                elif request.POST['tons'] == '3' and request.POST['transType'] == 'manual':
+                elif request.POST['tons'] == '3':
                     drivingclass = '4'
                     transType = 'manual'
-                elif request.POST['tons'] == '3' and request.POST['transType'] == 'auto':
-                    drivingclass = '4a'
-                    transType = 'auto'
                 elif request.POST['tons'] == '5':
                     drivingclass = '5'
                     transType = 'manual'
@@ -151,7 +141,7 @@ def registerVehicle(request):
             status = 'redirect'
         else:
             if 'coyId' not in request.session:
-                return HttpResponseRedirect('/admin/home')
+                return HttpResponseRedirect('/home')
     if 'coyId' in request.session:
         coyId = request.session['coyId']
     else:
