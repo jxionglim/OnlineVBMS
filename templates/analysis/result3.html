@@ -50,9 +50,29 @@
             {% endif %}
         </strong></legend>
         <div class="control-group">
-            <small>
-                {{ jobAmt }}
-            </small>
+            <table class="table table-condensed table-hover table-striped table-bordered">
+                <tr>
+                    <th style="text-align: center">Company ID</th>
+                    <th style="text-align: center">Company Name</th>
+                    <th style="text-align: center">No. of Jobs</th>
+                    <th style="text-align: center">% of Jobs</th>
+                    <th style="text-align: center">Amt of $$</th>
+                    <th style="text-align: center">% of $$</th>
+                    <th style="text-align: center">Actions</th>
+                </tr>
+                {% for entries in jobAmt %}
+                    <tr>
+                        {% for attribute in entries %}
+                            {% if forloop.counter == 4 or forloop.counter == 6 %}
+                                <td style="text-align: center">{{ attribute|floatformat }}</td>
+                            {% else %}
+                                <td style="text-align: center">{{ attribute }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        <td style="text-align: center"><a href="/viewCompany/id={{ entries.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
     <hr>

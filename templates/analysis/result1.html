@@ -49,13 +49,40 @@
                 All trips from {{ startLoc }} to {{ endLoc }} within the last {{ qty }} {% if period == "m" %} month {% else %} year {% endif %}
             {% endif %}
         </strong></legend>
-        <div class="control-group">
-            <small>
-                {{ tripInfo|length }} records
-                <br>
-                {{ tripInfo }}
-            </small>
-        </div>
+        {% if tripInfo|length > 0 %}
+            <small><strong>Total number of trips: {{ tripInfo|length }}</strong><br><br></small>
+            <div class="control-group">
+                <table class="table table-condensed table-hover table-striped table-bordered">
+                    <tr>
+                        <th style="text-align: center">Coy ID</th>
+                        <th style="text-align: center">Company Name</th>
+                        <th style="text-align: center">Job ID</th>
+                        <th style="text-align: center">Trip ID</th>
+                        <th style="text-align: center">Source</th>
+                        <th style="text-align: center">Destination</th>
+                        <th style="text-align: center">Start Time</th>
+                        <th style="text-align: center">End Time</th>
+                        <th style="text-align: center">Customer</th>
+                    </tr>
+                    {% for trip in tripInfo %}
+                        <tr>
+                            {% for attribute in trip %}
+                                {% if forloop.counter == 7 or forloop.counter == 8 %}
+                                    <td style="text-align: center">{{ attribute|date:"d M y, Hi" }}</td>
+                                {% elif forloop.counter == 1 %}
+                                    <td style="text-align: center"><a href="/viewCompany/id={{ attribute }}">{{ attribute }}</a>
+                                {% else %}
+                                    <td style="text-align: center">{{ attribute }}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                </table>
+            </div>
+        {% else %}
+            <small>No trips are found in the system...</small>
+        {% endif %}
     </div>
     <hr>
 

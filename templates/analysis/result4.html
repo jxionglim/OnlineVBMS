@@ -43,10 +43,25 @@
 <div class="container">
     <div class="hero-unit">
         <legend><strong>Percentage of customer attained by each company</strong></legend>
+        <small><strong>Total number of customers in system: {{ cusTotal }}</strong><br><br></small>
         <div class="control-group">
-            <small>
-                {{ coyCust }}
-            </small>
+            <table class="table table-condensed table-hover table-striped table-bordered">
+                <tr>
+                    <th style="text-align: center">Company ID</th>
+                    <th style="text-align: center">Company Name</th>
+                    <th style="text-align: center">% of Customers</th>
+                    <th style="text-align: center">No. of Customers</th>
+                    <th style="text-align: center">Actions</th>
+                </tr>
+                {% for coy in coyCust %}
+                    <tr>
+                        {% for attribute in coy %}
+                            <td style="text-align: center">{{ attribute }}</td>
+                        {% endfor %}
+                        <td style="text-align: center"><a href="/viewCompany/id={{ coy.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
     <hr>

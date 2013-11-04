@@ -2,7 +2,7 @@ import dbaccess
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from analysis.models import allTripCondForm, driverActivityForm, numJobNAmtForm, custDistForm, coyJoblessForm
+from analysis.models import allTripCondForm, numJobNAmtForm, custDistForm, coyJoblessForm
 
 
 def analyze(request):
@@ -42,24 +42,14 @@ def analyze(request):
         if currentReq == 4:
             form = custDistForm(request.POST)
             if form.is_valid():
+                cusTotal = dbaccess.getTotalCus()
                 coyCust = dbaccess.getCusDistribution(request.POST['order'])
                 return render_to_response('analysis/result4.html', {
+                    'cusTotal': cusTotal,
                     'coyCust': coyCust,
-                }, context_instance=RequestContext(request))
-        if currentReq == 5:
-            form = driverActivityForm(request.POST)
-            if form.is_valid():
-                numVeh = dbaccess.getNumVehByCatByCoy(request.POST['company'])
-                numDriv = dbaccess.getNumDriByClassByCoy(request.POST['company'])
-                company = dbaccess.getCoyInfoByCoyId(request.POST['company'])
-                return render_to_response('analysis/result5.html', {
-                    'numVeh': numVeh,
-                    'numDriv': numDriv,
-                    'company': company,
                 }, context_instance=RequestContext(request))
     return render_to_response('analysis/options.html', {
         'allTripCond': allTripCondForm(),
-        'driverActivity': driverActivityForm(),
         'numJobNAmt': numJobNAmtForm(),
         'custDist': custDistForm(),
         'coyJobless': coyJoblessForm()
