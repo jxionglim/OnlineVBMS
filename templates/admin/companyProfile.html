@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ coy.1 }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VMBS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="hero-unit">
+                    <h3><strong>{{ coy.1 }}</strong></h3>
+                    <legend><strong>Company Details</strong></legend>
+                    {% for key, values in coyDetails.items %}
+                        <div class="row">
+                            <div class="span2 offset1"><small><strong>{{ key }}</strong></small></div>
+                            <div class="span8 offset1"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
+                        </div>
+                    {% endfor %}
+                    <br>
+                    <legend><strong>Driver Details</strong></legend>
+                    {% for key, values in driverDetails.items %}
+                        <div class="row">
+                            <div class="span2 offset1"><small><strong>{{ key }}</strong></small></div>
+                            <div class="span8 offset1"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
+                        </div>
+                    {% endfor %}
+                    <br>
+                    <legend><strong>Vehicle Details</strong></legend>
+                    <div class="row">
+                        <div class="span3 offset1">
+                            <strong>Cars</strong>
+                            {% for key, values in carDetails.items %}
+                                <div class="row">
+                                    <div class="span2 offset2"><small><strong>{{ key }}</strong></small></div>
+                                    <div class="span2 offset2"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="span3 offset1">
+                            <strong>Buses</strong>
+                            {% for key, values in busDetails.items %}
+                                <div class="row">
+                                    <div class="span2 offset2"><small><strong>{{ key }}</strong></small></div>
+                                    <div class="span2 offset2"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="span3 offset1">
+                            <strong>Lorries</strong>
+                            {% for key, values in lorryDetails.items %}
+                                <div class="row">
+                                    <div class="span3 offset2"><small><strong>{{ key }}</strong></small></div>
+                                    <div class="span3 offset2"><small>{% if values != None %} {{ values }} {% else %} - {% endif %}</small></div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>

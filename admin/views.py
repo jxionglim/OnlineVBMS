@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.datastructures import SortedDict
+
 
 @csrf_exempt
 def registerCompany(request):
@@ -157,6 +159,106 @@ def registerVehicle(request):
         'status': status,
         'coyId': coyId
     }, context_instance=RequestContext(request))
+
+@csrf_exempt
+def viewCompanyProfile(request):
+    coyId = request.get_full_path().split('=')[1]
+    coy = dbaccess.getCompanyById(coyId)
+    coyDetails = SortedDict([
+        ('Address', coy[6]),
+        ('Postal Code', coy[5]),
+        ('Contact Number', coy[4]),
+        ('Fax Number', coy[3]),
+        ('Email', coy[2]),
+        ])
+
+    drivers = dbaccess.getNumDriByClassByCoy(coyId)
+    no3 = 0
+    no3a = 0
+    no4 = 0
+    no4a = 0
+    no5 = 0
+    for driver in drivers:
+        if driver[0] == '3':
+            no3 = driver[1]
+        elif driver[0] == '3a':
+            no3a = driver[1]
+        elif driver[0] == '4':
+            no4 = driver[1]
+        elif driver[1] == '4a':
+            no4a = driver[1]
+        elif driver[1] == '5':
+            no5 = driver[1]
+
+    driverDetails = SortedDict([
+        ('Class 3', no3),
+        ('Class 3a', no3a),
+        ('Class 4', no4),
+        ('Class 4a', no4a),
+        ('Class 5', no5),
+        ])
+
+    vehicles = dbaccess.getNumVehByCatByCoy(coyId)
+    sedanNo = 0
+    luxuryNo = 0
+    mpvNo = 0
+    busNo = 0
+    minibusNo = 0
+    coachNo = 0
+    ton1No = 0
+    ton3No = 0
+    ton5No = 0
+
+    for vehicle in vehicles:
+        if vehicle[0] == 'Car':
+            if vehicle[1] == 'sedan':
+                sedanNo = vehicle[2]
+            if vehicle[1] == 'luxury':
+                luxuryNo = vehicle[2]
+            if vehicle[1] == 'mpv':
+                mpvNo = vehicle[2]
+        elif vehicle[0] == 'Bus':
+            if vehicle[1] == 'bus':
+                busNo = vehicle[2]
+            if vehicle[1] == 'mini':
+                minibusNo = vehicle[2]
+            if vehicle[1] == 'coach':
+                coachNo = vehicle[2]
+        elif vehicle[0] == 'Lorry':
+            if vehicle[1] == ' 1':
+                ton1No = vehicle[2]
+            if vehicle[1] == ' 3':
+                ton3No = vehicle[2]
+            if vehicle[1] == ' 5':
+                ton5No = vehicle[2]
+
+    carDetails = SortedDict([
+        ('Sedan', sedanNo),
+        ('Luxury', luxuryNo),
+        ('MPV', mpvNo),
+        ])
+
+    busDetails = SortedDict([
+        ('Bus', busNo),
+        ('Minibus', minibusNo),
+        ('Coach', coachNo),
+        ])
+
+    lorryDetails = SortedDict([
+        ('1 Ton', ton1No),
+        ('3 Ton', ton3No),
+        ('5 Ton', ton5No),
+        ])
+
+    return render_to_response('admin/companyProfile.html', {
+        'coy': coy,
+        'coyDetails': coyDetails,
+        'driverDetails': driverDetails,
+        'carDetails': carDetails,
+        'busDetails': busDetails,
+        'lorryDetails': lorryDetails
+    }, context_instance=RequestContext(request))
+
 
 @csrf_exempt
 def viewCompany(request):

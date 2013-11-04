@@ -46,7 +46,7 @@
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="hero-unit">
-                    <legend><strong>Company Details</strong></legend>
+                    <legend><strong>List of Companies</strong></legend>
                     <table class="table table-condensed table-hover table-striped table-bordered">
                         <thead>
                         <tr>
@@ -65,7 +65,7 @@
                         {% for coy in allCoy %}
                             <tr>
                                 <td style="text-align: center">{{ coy.0 }}</td>
-                                <td style="text-align: center">{{ coy.1 }}</td>
+                                <td style="text-align: center"><a href="../viewCompanyProfile/id={{ coy.0 }}">{{ coy.1 }}</a></td>
                                 <td style="text-align: center">{{ coy.6 }}</td>
                                 <td style="text-align: center">{{ coy.5 }}</td>
                                 <td style="text-align: center">{{ coy.4 }}</td>

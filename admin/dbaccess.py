@@ -73,7 +73,7 @@ def checkUniqueCarplateNo(carplateNo):
     cursor = connection.cursor()
     query = "SELECT * FROM Vehicle WHERE carplateNo=%s"
     cursor.execute(query, [carplateNo])
-    row = cursor.fetchall()
+    row = cursor.fetchone()
     return False if row is not None else True
 
 
@@ -81,7 +81,7 @@ def checkUniqueIuNo(iuNo):
     cursor = connection.cursor()
     query = "SELECT * FROM Vehicle WHERE iuNo=%s"
     cursor.execute(query, [iuNo])
-    row = cursor.fetchall()
+    row = cursor.fetchone()
     return False if row is not None else True
 
 
@@ -194,3 +194,42 @@ def getLorriesById(id):
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
+
+
+def getNumDriByClassByCoy(id):
+    cursor = connection.cursor()
+    query = "SELECT d.drivingClass, COUNT(driverId) AS numDri " \
+            "FROM company c, driver d " \
+            "WHERE c.coyId = d.coyId " \
+            "AND c.coyId = %s " \
+            "GROUP BY c.coyId, d.drivingClass " \
+            "ORDER BY d.drivingClass ASC"
+    cursor.execute(query, [id])
+    rows = cursor.fetchall()
+    return rows
+
+
+def getNumVehByCatByCoy(id):
+    cursor = connection.cursor()
+    query = "SELECT type, category, numVeh " \
+            "FROM " \
+                "(SELECT \'Car\' AS type, car.category, COUNT(v.carplateNo) AS numVeh, c.coyId " \
+                "FROM vehicle v, car, company c " \
+                "WHERE v.carplateNo = car.carplateNo " \
+                "AND v.coyId = c.coyId " \
+                "GROUP BY car.category, c.coyId " \
+                "UNION " \
+                "SELECT \'Bus\' AS type, b.category, COUNT(v.carplateNo) AS numVeh, c.coyId " \
+                "FROM vehicle v, bus b, company c " \
+                "WHERE v.carplateNo = b.carplateNo " \
+                "AND v.coyId = c.coyId " \
+                "GROUP BY b.category, c.coyId " \
+                "UNION " \
+                "SELECT \'Lorry\' AS type, TO_CHAR(l.tons,\'9\') AS category, COUNT(v.carplateNo) AS numVeh, c.coyId " \
+                "FROM vehicle v, lorry l, company c " \
+                "WHERE v.carplateNo = l.carplateNo " \
+                "AND v.coyId = c.coyId GROUP BY l.tons, c.coyId) A " \
+            "WHERE A.coyId = %s "
+    cursor.execute(query, [id])
+    rows = cursor.fetchall()
+    return rows
