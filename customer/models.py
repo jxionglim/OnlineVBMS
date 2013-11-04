@@ -3,12 +3,27 @@ from django import forms
 from django.db import models
 from django.forms import ModelForm
 from admin import models as adminModel
+import datetime
 
 
 def validateDelimitComma(value):
     if re.search('^(([0-9a-zA-Z][0-9a-zA-Z_]*)([,][0-9a-zA-Z][0-9a-zA-Z_]*)*)$',value) == None:
         raise forms.ValidationError("Please enter values delimited by commas.")
     return value
+
+
+def validateDateFormat(value):
+    if re.search('^(((((0[1-9])|(1\d)|(2[0-8]))-((0[1-9])|(1[0-2])))|((31-((0[13578])|(1[02])))|((29|30)-((0[1,3-9])|(1[0-2])))))-((20[0-9][0-9]))|(29-02-20(([02468][048])|([13579][26]))))$', value) == None:
+        raise forms.ValidationError("Please enter a proper date format.")
+    return value
+
+
+def validateTimeFormat(value):
+    if re.search('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$',value) == None:
+        raise forms.ValidationError("Please enter a proper time format.")
+    return value
+
+
 
 
 # Create your models here.
@@ -79,18 +94,27 @@ class TripForm(ModelForm):
         ('NO', 'NO'),
     )
 
-    startDate = forms.CharField(label="Start Date", max_length=10, help_text="Format: DD-MM-YYYY")
-    startTime = forms.CharField(label="Start Time", max_length=5, help_text="Format: 08:30, 16:45")
-    endDate = forms.CharField(label="End Date", max_length=10, help_text="Format: DD-MM-YYYY")
-    endTime = forms.CharField(label="End Time", max_length=5, help_text="Format: 08:30, 16:45")
+    startDate = forms.CharField(label="Start Date", max_length=10, help_text="Format: DD-MM-YYYY", validators=[validateDateFormat])
+    startTime = forms.CharField(label="Start Time", max_length=5, help_text="Format: 08:30, 16:45", validators=[validateTimeFormat])
+    endDate = forms.CharField(label="End Date", max_length=10, help_text="Format: DD-MM-YYYY", validators=[validateDateFormat])
+    endTime = forms.CharField(label="End Time", max_length=5, help_text="Format: 08:30, 16:45", validators=[validateTimeFormat])
     startLocation = forms.CharField(label="Starting Location", max_length=256)
     endLocation = forms.CharField(label="Ending Location", max_length=256)
     roundTrip = forms.ChoiceField(choices=ROUND_TRIP_SELECTION, widget=forms.RadioSelect())
-    noOfCars = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of cars needed", widget=forms.Select(attrs={"onChange": 'handleCarSelection(value)'}))
-    noOfBuses = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of buses needed", widget=forms.Select(attrs={"onChange": 'handleBusSelection(value)'}))
-    noOfLorries = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of lorries needed", widget=forms.Select(attrs={"onChange": 'handleLorrySelection(value)'}))
+    sedanAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of sedan cars needed")
+    mpvAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of mpv cars needed")
+    luxuryAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of luxury cars needed")
+    busAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of buses needed")
+    miniAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of mini buses needed")
+    coachAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of coach buses needed")
+    oneTonAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of 1-ton lorries needed")
+    threeTonAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of 3-ton lorries needed")
+    fiveTonAmt = forms.ChoiceField(choices=[(x, x) for x in range(0, 11)], label="No of 5-ton lorries needed")
     comments = forms.CharField(label="Comments", max_length=256)
 
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(TripForm, self).__init__(*args, **kwargs)
 
 
     class Meta:
@@ -98,11 +122,41 @@ class TripForm(ModelForm):
         exclude = ['cusId', 'jobId', 'tripId']
 
     #check that startDate/endDate > todays date
-    '''def clean_dateReq(self):
-        amount = self.cleaned_data.get('amount', '')
-        if amount <= 0:
-            raise forms.ValidationError("Enter a valid payment amount")
-        return amount'''
+    def clean_startDate(self):
+        startDate = self.cleaned_data.get('startDate', '')
+        startingDate = datetime.datetime.strptime(startDate, "%d-%m-%Y").date()
+        now = datetime.datetime.now().date()
+        if startingDate < now:
+            raise forms.ValidationError("Enter a valid starting date")
+        return startingDate
+
+
+    def clean_endDate(self):
+        endDate = self.cleaned_data.get('endDate', '')
+        endingDate = datetime.datetime.strptime(endDate, "%d-%m-%Y").date()
+        now = datetime.datetime.now().date()
+        if endingDate < now:
+            raise forms.ValidationError("Enter a valid ending date")
+        return endingDate
+
+    def clean(self):
+        cleaned_data = super(TripForm, self).clean()
+        startDate = self.cleaned_data.get('startDate')
+        endDate = self.cleaned_data.get('endDate')
+        startTime = self.cleaned_data.get('startTime')
+        endTime = self.cleaned_data.get('endTime')
+        if startDate is not None and endDate is not None and startTime is not None and endTime is not None:
+            changedStartDateTimeString = str(startDate)+" "+str(startTime)+":00"
+            changedEndDateTimeString = str(endDate)+" "+str(endTime)+":00"
+            changedStartDateTime = datetime.datetime.strptime(changedStartDateTimeString, "%Y-%m-%d %H:%M:%S")
+            changedEndDateTime = datetime.datetime.strptime(changedEndDateTimeString, "%Y-%m-%d %H:%M:%S")
+            if changedEndDateTime < changedStartDateTime:
+                msg = "End Date should be later than Start Date"
+                self._errors["endDate"] = self.error_class([msg])
+        return cleaned_data
+
+
+
 
 
 class companySearchForm(ModelForm):
