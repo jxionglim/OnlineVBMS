@@ -6,6 +6,4 @@ urlpatterns = patterns('analysis.views',
     (r'^2$', 'analyze'),
     (r'^3$', 'analyze'),
     (r'^4$', 'analyze'),
-    (r'^5$', 'analyze'),
-    (r'^6$', 'analyze'),
 )

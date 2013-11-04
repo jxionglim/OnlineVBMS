@@ -25,43 +25,6 @@ def getAllCompanies():
     rows = cursor.fetchall()
     return rows
 
-def getNumVehByCatByCoy(id):
-    cursor = connection.cursor()
-    query = "SELECT type, category, numVeh " \
-            "FROM " \
-                "(SELECT \'Car\' AS type, car.category, COUNT(v.carplateNo) AS numVeh, c.coyId " \
-                "FROM vehicle v, car, company c " \
-                "WHERE v.carplateNo = car.carplateNo " \
-                "AND v.coyId = c.coyId " \
-                "GROUP BY car.category, c.coyId " \
-                "UNION " \
-                "SELECT \'Bus\' AS type, b.category, COUNT(v.carplateNo) AS numVeh, c.coyId " \
-                "FROM vehicle v, bus b, company c " \
-                "WHERE v.carplateNo = b.carplateNo " \
-                "AND v.coyId = c.coyId " \
-                "GROUP BY b.category, c.coyId " \
-                "UNION " \
-                "SELECT \'Lorry\' AS type, TO_CHAR(l.tons,\'9\') AS category, COUNT(v.carplateNo) AS numVeh, c.coyId " \
-                "FROM vehicle v, lorry l, company c " \
-                "WHERE v.carplateNo = l.carplateNo " \
-                "AND v.coyId = c.coyId GROUP BY l.tons, c.coyId) A " \
-            "WHERE A.coyId = %s "
-    cursor.execute(query, [id])
-    rows = cursor.fetchall()
-    return rows
-
-def getNumDriByClassByCoy(id):
-    cursor = connection.cursor()
-    query = "SELECT d.drivingClass, COUNT(driverId) AS numDri " \
-            "FROM company c, driver d " \
-            "WHERE c.coyId = d.coyId " \
-            "AND c.coyId = %s " \
-            "GROUP BY c.coyId, d.drivingClass " \
-            "ORDER BY d.drivingClass ASC"
-    cursor.execute(query, [id])
-    rows = cursor.fetchall()
-    return rows
-
 
 def getCoyInfoByCoyId(id):
     cursor = connection.cursor()
@@ -86,7 +49,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
 
     if deductPeriod is None:
         if startLoc == "a" and endLoc == "e":
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -94,7 +57,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query)
         elif startLoc == "a":
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -103,7 +66,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + endLoc.lower() + "%"])
         elif endLoc == "e":
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -112,7 +75,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + startLoc.lower() + "%"])
         else:
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -123,7 +86,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
             cursor.execute(query, ["%" + startLoc.lower() + "%", "%" + endLoc.lower() + "%"])
     else:
         if startLoc == "a" and endLoc == "e":
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -133,7 +96,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, [dateLimit, dateNow])
         elif startLoc == "a":
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -144,7 +107,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + endLoc.lower() + "%", dateLimit, dateNow])
         elif endLoc == "e":
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -155,7 +118,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + startLoc.lower() + "%", dateLimit, dateNow])
         else:
-            query = "SELECT c.coyName, t.jobId, t.tripId, t.startTime, t.startLocation, t.endTime, t.endLocation, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -183,7 +146,7 @@ def getJobAmtByCoy(order, qty, period):
         deductPeriod = None
 
     if deductPeriod is None:
-        query = "SELECT company.coyName, A.countJob, (A.countJob/B.totalJob)*100, A.total, (A.total/B.totalSum)*100 " \
+        query = "SELECT company.coyId, company.coyName, A.countJob, (A.countJob/B.totalJob)*100, A.total, (A.total/B.totalSum)*100 " \
                 "FROM (SELECT c.coyId, count(j.jobId) AS countJob, SUM(amount) AS total " \
                     "FROM job j, company c " \
                     "WHERE j.coyId = c.coyId " \
@@ -194,7 +157,7 @@ def getJobAmtByCoy(order, qty, period):
                 "ORDER by A.countJob, A.total " + order
         cursor.execute(query)
     else:
-        query = "SELECT company.coyName, A.countJob, (A.countJob/B.totalJob)*100, A.total, (A.total/B.totalSum)*100 " \
+        query = "SELECT company.coyId, company.coyName, A.countJob, (A.countJob/B.totalJob)*100, A.total, (A.total/B.totalSum)*100 " \
                 "FROM (SELECT c.coyId, count(j.jobId) AS countJob, SUM(amount) AS total " \
                     "FROM job j, company c " \
                     "WHERE j.coyId = c.coyId " \
@@ -212,9 +175,16 @@ def getJobAmtByCoy(order, qty, period):
     return rows
 
 
+def getTotalCus():
+    cursor = connection.cursor()
+    query = "SELECT COUNT(cusId) FROM customer"
+    cursor.execute(query)
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
+
 def getCusDistribution(order):
     cursor = connection.cursor()
-    query = "SELECT c.coyName, (coyCus/totalCus)*100 AS cusPercent, coyCus " \
+    query = "SELECT c.coyId, c.coyName, (coyCus/totalCus)*100 AS cusPercent, coyCus " \
             "FROM (SELECT coyId, COUNT(DISTINCT(cusId)) AS coyCus " \
                 "FROM job " \
                 "GROUP BY coyId) A, " \
@@ -240,7 +210,7 @@ def getJoblessCoy(qty, period):
         deductPeriod = None
 
     if deductPeriod is None:
-        query = "SELECT c.coyName " \
+        query = "SELECT c.coyId, c.coyName " \
                 "FROM company c " \
                 "WHERE NOT EXISTS " \
                     "(SELECT * " \
@@ -249,7 +219,7 @@ def getJoblessCoy(qty, period):
                 "ORDER BY c.coyName"
         cursor.execute(query)
     else:
-        query ="SELECT coyName " \
+        query ="SELECT c.coyId, c.coyName " \
                "FROM company c " \
                "WHERE NOT EXISTS " \
                     "(SELECT * " \

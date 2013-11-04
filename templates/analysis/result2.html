@@ -50,9 +50,21 @@
             {% endif %}
         </strong></legend>
         <div class="control-group">
-            <small>
-                {{ joblessCoy }}
-            </small>
+            <table class="table table-condensed table-hover table-striped table-bordered">
+                <tr>
+                    <th style="text-align: center">Company ID</th>
+                    <th style="text-align: center">Company Name</th>
+                    <th style="text-align: center">Actions</th>
+                </tr>
+                {% for job in joblessCoy %}
+                    <tr>
+                        {% for attribute in job %}
+                            <td style="text-align: center">{{ attribute }}</td>
+                        {% endfor %}
+                        <td style="text-align: center"><a href="/viewCompany/id={{ job.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
     <hr>

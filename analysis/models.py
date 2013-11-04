@@ -1,14 +1,12 @@
 import dbaccess
 from django import forms
-from django.db import models
-from django.forms import ModelForm
 
 
 class allTripCondForm(forms.Form):
     startLocationArr = dbaccess.getJobStartLoc()
     endLocationArr = dbaccess.getJobEndLoc()
 
-    PERIOD_CHOICES = ( ('m', 'month'), ('y', 'year'), ('a', 'entire period'))
+    PERIOD_CHOICES = (('m', 'month'), ('y', 'year'), ('a', 'entire period'))
     START_CHOICES = [(x[0], x[0]) for x in startLocationArr]
     END_CHOICES = [(x[0], x[0]) for x in endLocationArr]
 
@@ -19,13 +17,6 @@ class allTripCondForm(forms.Form):
     period = forms.ChoiceField(choices=PERIOD_CHOICES, widget=forms.Select(attrs={'class': 'span1'}))
     startLocation = forms.ChoiceField(choices=START_CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
     endLocation = forms.ChoiceField(choices=END_CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
-
-
-class driverActivityForm(forms.Form):
-    companyArr = dbaccess.getAllCompanies()
-    COMPANY_CHOICES = [(x[0], x[1]) for x in companyArr]
-
-    company = forms.ChoiceField(choices=COMPANY_CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
 
 
 class numJobNAmtForm(forms.Form):
