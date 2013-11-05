@@ -90,10 +90,18 @@ def login(request):
 
 
 def viewProfile(request):
-    if not request.user.is_authenticated() or request.user.is_superuser:
+    if not request.user.is_authenticated():
         return HttpResponseRedirect('/')
-    cusId = dbaccess.getCustIdByUserId(request.user.id)
-    custRow = dbaccess.getCustInfoById(cusId)
+    if not request.get_full_path().__contains__('id') and request.user.is_superuser:
+        return HttpResponseRedirect('/')
+    if request.get_full_path().__contains__('id') and not request.user.is_superuser:
+        return HttpResponseRedirect('/')
+    else:
+        if request.get_full_path().__contains__('id'):
+            custRow = dbaccess.getCustInfoById(int(request.get_full_path().split('id=')[-1]))
+        else:
+            cusId = dbaccess.getCustIdByUserId(request.user.id)
+            custRow = dbaccess.getCustInfoById(cusId)
     custInfo = SortedDict([
         ('Email', custRow[3]),
         ('First Name', custRow[1]),

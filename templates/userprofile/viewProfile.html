@@ -47,7 +47,7 @@
             <div class="row-fluid">
                 <div class="hero-unit">
                     <legend><strong>Personal Information</strong>&nbsp&nbsp&nbsp
-                        <a href="/user/edit" class="btn btn-small btn-info">Edit</a>
+                        {% if request.user.is_superuser == False %}<a href="/user/edit" class="btn btn-small btn-info">Edit</a>{% endif %}
                     </legend>
                     {% for key, values in custInfo %}
                         <div class="row">

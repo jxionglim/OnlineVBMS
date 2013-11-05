@@ -41,7 +41,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
 
     if deductPeriod is None:
         if startLoc == "a" and endLoc == "e":
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -49,7 +49,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query)
         elif startLoc == "a":
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -58,7 +58,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + endLoc.lower() + "%"])
         elif endLoc == "e":
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -67,7 +67,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + startLoc.lower() + "%"])
         else:
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -78,7 +78,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
             cursor.execute(query, ["%" + startLoc.lower() + "%", "%" + endLoc.lower() + "%"])
     else:
         if startLoc == "a" and endLoc == "e":
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -88,7 +88,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, [dateLimit, dateNow])
         elif startLoc == "a":
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -99,7 +99,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + endLoc.lower() + "%", dateLimit, dateNow])
         elif endLoc == "e":
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
@@ -110,7 +110,7 @@ def getTripsByLocation(startLoc, endLoc, qty, period):
                     "ORDER BY c.coyName, t.jobId ASC"
             cursor.execute(query, ["%" + startLoc.lower() + "%", dateLimit, dateNow])
         else:
-            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email " \
+            query = "SELECT c.coyId, c.coyName, t.jobId, t.tripId, t.startLocation, t.endLocation, t.startTime, t.endTime, u.email, u.cusId " \
                     "FROM trip t, job j, company c, customer u  " \
                     "WHERE t.jobId = j.jobId " \
                     "AND t.cusId = u.cusId " \
