@@ -1,4 +1,104 @@
 <!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>View Jobs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VMBS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li class="active"><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="hero-unit">
+                <legend><strong>List of Trips in Job</strong></legend>
+                {% if listOfJobs|length <= 0 %}
+                    <small>There are no jobs in the system.</small>
+                {% else %}
+                    <table class="table table-condensed table-hover table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="text-align: center">Trip Id</th>
+                            <th style="text-align: center">Source</th>
+                            <th style="text-align: center">Destination</th>
+                            <th style="text-align: center">Start Time</th>
+                            <th style="text-align: center">End Time</th>
+                            <th style="text-align: center">Comments</th>
+                            <th style="text-align: center">Customer</th>
+                            <th style="text-align: center">Actions</th>
+                        </tr>
+                        </thead>
+                        {% for trips in listOfTrips %}
+                            <tr>
+                                <td style="text-align: center">{{ trips.0 }}</td>
+                                <td style="text-align: center">{{ trips.3 }}</td>
+                                <td style="text-align: center">{{ trips.4 }}</td>
+                                <td style="text-align: center">{{ trips.1 }}</td>
+                                <td style="text-align: center">{{ trips.2 }}</td>
+                                <td style="text-align: center">{{ trips.5 }}</td>
+                                <td style="text-align: center"><a href="/user/id={{ trips.3 }}">name</a></td>
+                                <td style="text-align: center"><a href="/customer/viewTrip/e_id={{ trips.0 }}"><img src="/static/images/edit-icon.png" alt="view"></a>&nbsp&nbsp<a href="/customer/viewTrip/d_id={{ trips.0 }}"><img src="/static/images/delete-icon.png" alt="view"></a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
+
 <html>
 <head>
     <title></title>
