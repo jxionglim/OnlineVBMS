@@ -21,14 +21,11 @@
         {% for attribute in trip %}
             <td width="150">{{ attribute }}</td>
         {% endfor %}
-        {% for attribute in trip %}
-            {% if forloop.counter == 1 %}
-                <td width="150">
-                    <a href="/customer/viewTrip/e_id={{ attribute }}">Edit</a> &nbsp &nbsp
-                    <a href="/customer/viewTrip/d_id={{ attribute }}">Delete</a>
-                </td>
-            {% endif %}
-        {% endfor %}
+        <td width="150">
+            <a href="/customer/viewTrip/e_id={{ trip.0 }}&&c_id={{ trip.7 }}">Edit</a> &nbsp &nbsp
+            <a href="/customer/viewTrip/d_id={{ trip.0 }}">Delete</a>
+        </td>
+
         </tr>
     {% endfor %}
 </table>
