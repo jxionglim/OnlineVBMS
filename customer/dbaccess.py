@@ -19,7 +19,7 @@ def getMaxTripId():
 
 def insertJob(params):
     cursor = connection.cursor()
-    query = "INSERT INTO Job VALUES (%s,%s,%s,%s,%s,%s)"
+    query = "INSERT INTO Job VALUES (%s,%s,%s,%s,%s)"
     cursor.execute(query, params)
     transaction.commit_unless_managed()
     return params[0]

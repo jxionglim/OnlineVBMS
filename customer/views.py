@@ -32,8 +32,7 @@ def addJob(request):
                 datetime.datetime.now().strftime("%Y-%m-%d"),
                 cusId,
                 coyId,
-                request.POST['amount'],
-                request.POST['paidStatus']
+                request.POST['amount']
             ]
             dbaccess.insertJob(params)
             request.session['jobId'] = jobId

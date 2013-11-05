@@ -33,7 +33,6 @@ class Job(models.Model):
     jobId = models.IntegerField()
     dateCreated = models.DateField()
     amount = models.DecimalField(max_digits=9, decimal_places=3)
-    paidStatus = models.CharField(max_length=8)
 
     class Meta:
         managed = False
@@ -69,7 +68,6 @@ class reqResources(models.Model):
 class JobForm(ModelForm):
     coyId = forms.IntegerField(label="Company")
     amount = forms.DecimalField(label="Amount")
-    paidStatus = forms.CharField(label="Paid Status",max_length=1, min_length=1)
 
     class Meta:
         model = Job
@@ -80,13 +78,6 @@ class JobForm(ModelForm):
         if amount <= 0:
             raise forms.ValidationError("Enter a valid payment amount")
         return amount
-
-    def clean_paidStatus(self):
-        paidStatus = self.cleaned_data.get('paidStatus', '')
-        if paidStatus != 'N' and paidStatus != 'Y':
-            raise forms.ValidationError("Enter a valid paid status")
-        return paidStatus
-
 
 class TripForm(ModelForm):
     ROUND_TRIP_SELECTION = (
