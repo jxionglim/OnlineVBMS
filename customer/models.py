@@ -4,6 +4,7 @@ from django.db import models
 from django.forms import ModelForm
 from admin import models as adminModel
 import datetime
+import dbaccess
 
 
 def validateDelimitComma(value):
@@ -65,19 +66,11 @@ class reqResources(models.Model):
         managed = False
 
 
-class JobForm(ModelForm):
-    coyId = forms.IntegerField(label="Company")
-    amount = forms.DecimalField(label="Amount")
+class JobForm(forms.Form):
+    companies = dbaccess.getCompanyNames()
+    COMPANY_CHOICES = [(x[0], x[0]) for x in companies]
+    coyId = forms.ChoiceField(label="Company Name", choices=COMPANY_CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
 
-    class Meta:
-        model = Job
-        exclude = ['cusId', 'jobId', 'dateCreated']
-
-    def clean_amount(self):
-        amount = self.cleaned_data.get('amount', '')
-        if amount <= 0:
-            raise forms.ValidationError("Enter a valid payment amount")
-        return amount
 
 class TripForm(ModelForm):
     ROUND_TRIP_SELECTION = (

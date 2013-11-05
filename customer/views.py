@@ -7,7 +7,7 @@ import dbaccess
 from copy import copy, deepcopy
 import userprofile.dbaccess as userProfileDBAccess
 from django.views.decorators.csrf import csrf_exempt
-
+import math
 
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
@@ -25,16 +25,9 @@ def addJob(request):
         form = JobForm(request.POST)
         if form.is_valid():
             jobId = dbaccess.getMaxJobId()+1
-            cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
-            coyId = request.POST['coyId']
-            params = [
-                jobId,
-                datetime.datetime.now().strftime("%Y-%m-%d"),
-                cusId,
-                coyId,
-                request.POST['amount']
-            ]
-            dbaccess.insertJob(params)
+            coyName = request.POST['coyId']
+            print coyName
+            coyId = dbaccess.getCoyIdByName(str(coyName))
             request.session['jobId'] = jobId
             request.session['coyId'] = coyId
             return HttpResponseRedirect('/customer/addTrip')
@@ -62,6 +55,10 @@ def addTrip(request):
             endTime = request.POST['endTime']
             startDateTime = startDate+" "+startTime+":00"
             endDateTime = endDate+" "+endTime+":00"
+            changedStartDateTime = datetime.datetime.strptime(startDateTime, "%d-%m-%Y %H:%M:%S")
+            changedEndDateTime = datetime.datetime.strptime(endDateTime, "%d-%m-%Y %H:%M:%S")
+            hours = math.floor((changedEndDateTime-changedStartDateTime).total_seconds()/3600)
+            print hours
             roundTrip = request.POST['roundTrip'] #gets YES or NO
             if roundTrip == "YES":
                 roundTrip = "y"
@@ -347,6 +344,25 @@ def addTrip(request):
                 print jobId
                 print cusId
 
+                tripAmount = calculateAmount(sedanAmt, mpvAmt, luxuryAmt, busAmt, miniAmt, coachAmt, oneTonAmt, threeTonAmt, fiveTonAmt, hours)
+
+                jobDetail = dbaccess.getJobDetails(jobId)
+                if jobDetail == 0:
+                    jobParams = [
+                        jobId,
+                        datetime.datetime.now().strftime("%Y-%m-%d"),
+                        cusId,
+                        coyId,
+                        tripAmount
+                    ]
+                    dbaccess.insertJob(jobParams)
+                else:
+                    jobParams = [
+                        tripAmount,
+                        jobId,
+                    ]
+                    dbaccess.updateJobAmount(jobParams)
+
                 params = [
                     tripId,
                     startDateTime,
@@ -385,6 +401,10 @@ def addTrip(request):
     return render_to_response('customer/addTrip.html', {
         'form': form,
     }, context_instance=RequestContext(request))
+
+def calculateAmount(numSedan, numMpv, numLuxury, numBus, numMini, numCoach, num1, num3, num5, hours):
+    totalAmount = int(numSedan)*15 + int(numMpv)*50 + int(numLuxury)*25 + int(numBus)*30 + int(numMini)*20 + int(numCoach)*40 + int(num1)*15 + int(num3)*25 + int(num5)*40
+    return totalAmount*hours
 
 
 def matchVehicleDriver(listOfAvailableVehicles, listOfAvailableDrivers, roundTrip, coyId, tripId, jobId, cusId):
@@ -607,7 +627,7 @@ def editTripOfJob(request):
     cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
     startDateTime = datetime.datetime.strptime(str(tripRow[0][1]), "%Y-%m-%d %H:%M:%S")
     endDateTime = datetime.datetime.strptime(str(tripRow[0][2]), "%Y-%m-%d %H:%M:%S")
-
+    initialHours = math.floor((endDateTime-startDateTime).total_seconds()/3600)
     tripReqResources = list(list(x) for x in dbaccess.getReqResourceByTripId(tripId))
     print "ORIGINAL"
     print tripReqResources
@@ -633,6 +653,9 @@ def editTripOfJob(request):
     noOfThreeTonLorry = dbaccess.getNoOfLorriesByCarplateNos(params)
     params = [5, tripId]
     noOfFiveTonLorry = dbaccess.getNoOfLorriesByCarplateNos(params)
+
+    initialAmount = calculateAmount(noOfSedanCars, noOfMpvCars, noOfLuxuryCars, noOfBusBus, noOfMiniBus, noOfCoachBus, noOfOneTonLorry, noOfThreeTonLorry, noOfFiveTonLorry, initialHours)
+
     if request.method == 'POST':
         form = TripForm(request, request.POST)
         if form.is_valid():
@@ -649,6 +672,7 @@ def editTripOfJob(request):
             changedEndDateTimeString = endDate+" "+endTime+":00"
             changedStartDateTime = datetime.datetime.strptime(changedStartDateTimeString, "%d-%m-%Y %H:%M:%S")
             changedEndDateTime = datetime.datetime.strptime(changedEndDateTimeString, "%d-%m-%Y %H:%M:%S")
+            finalHours = math.floor((changedEndDateTime-changedStartDateTime).total_seconds()/3600)
             print changedStartDateTime
             print changedEndDateTime
             if changedEndDateTime > changedStartDateTime:
@@ -2469,6 +2493,15 @@ def editTripOfJob(request):
                             x[6]
                         ]
                         dbaccess.insertReqResource(resourceParams)
+
+                    finalAmount = calculateAmount(sedanAmtChanged, mpvAmtChanged, luxuryAmtChanged, busAmtChanged, miniAmtChanged, coachAmtChanged, oneTonAmtChanged, threeTonAmtChanged, fiveTonAmtChanged, finalHours)
+                    difference = finalAmount - initialAmount
+                    jobParams = [
+                        difference,
+                        jobId
+                    ]
+                    dbaccess.updateJobAmount(jobParams)
+
                 else:
                     print "OVERALL A FAIL"
                 return HttpResponseRedirect('/customer/viewJobs/j_id=' + str(jobId))

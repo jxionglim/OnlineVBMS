@@ -1,6 +1,21 @@
 from django.db import connection, transaction
 
 
+def getCompanyNames():
+    cursor = connection.cursor()
+    query = 'SELECT coyName FROM company'
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def getCoyIdByName(coyName):
+    cursor = connection.cursor()
+    query = 'SELECT coyId FROM company WHERE coyName=%s'
+    cursor.execute(query, [coyName])
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
+
+
 def getMaxJobId():
     cursor = connection.cursor()
     query = 'SELECT MAX(jobId) FROM Job'
@@ -20,6 +35,14 @@ def getMaxTripId():
 def insertJob(params):
     cursor = connection.cursor()
     query = "INSERT INTO Job VALUES (%s,%s,%s,%s,%s)"
+    cursor.execute(query, params)
+    transaction.commit_unless_managed()
+    return params[0]
+
+
+def updateJobAmount(params):
+    cursor = connection.cursor()
+    query = "UPDATE Job SET amount = amount+%s WHERE jobId=%s"
     cursor.execute(query, params)
     transaction.commit_unless_managed()
     return params[0]
@@ -228,6 +251,14 @@ def getJobOfTrip(id):
     return row[0] if row[0] is not None else 0
 
 
+def getJobDetails(id):
+    cursor = connection.cursor()
+    query = "SELECT * FROM Job WHERE jobId=%s"
+    cursor.execute(query, [id])
+    row = cursor.fetchone()
+    return row[0] if row is not None else 0
+
+
 def getDrivingClassOfDriver(id):
     cursor = connection.cursor()
     query = "SELECT drivingClass FROM driver WHERE driverId=%s"
@@ -427,5 +458,3 @@ def getCompanyByVehicleTypes(carChoice, busChoice, lorryChoice):
     print query
     companyResult = cursor.execute(query)
     return companyResult
-
-
