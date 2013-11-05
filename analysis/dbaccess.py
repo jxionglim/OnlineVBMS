@@ -26,14 +26,6 @@ def getAllCompanies():
     return rows
 
 
-def getCoyInfoByCoyId(id):
-    cursor = connection.cursor()
-    query = "SELECT * FROM company WHERE coyId=%s"
-    cursor.execute(query, [id])
-    row = cursor.fetchone()
-    return row
-
-
 def getTripsByLocation(startLoc, endLoc, qty, period):
     cursor = connection.cursor()
     dateNow = datetime.datetime.now()
@@ -228,7 +220,7 @@ def getJoblessCoy(qty, period):
                     "AND r.jobId = j.jobId " \
                     "AND j.dateCreated >= TO_DATE(%s,'YYYY-MM-DD HH24:MI:SS') " \
                     "AND j.dateCreated <= TO_DATE(%s,'YYYY-MM-DD HH24:MI:SS')) " \
-                "ORDER BY coyName"
+                "ORDER BY c.coyName"
         cursor.execute(query, [dateLimit, dateNow])
     rows = cursor.fetchall()
     return rows

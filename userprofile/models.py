@@ -29,21 +29,6 @@ class Customer(models.Model):
     class Meta:
         managed = False
 
-    """@classmethod
-    def create(cls, cusId, firstName, lastName, email, contactNo, zipcode, streetName, cExpDate, cSerialNo, passwd, user):
-        cust = cls(cusId=cusId,
-                   email=email,
-                   passwd=passwd,
-                   firstName=firstName,
-                   lastName=lastName,
-                   contactNo=contactNo,
-                   streetName=streetName,
-                   zipcode=zipcode,
-                   cSerialNo=cSerialNo,
-                   cExpDate=cExpDate,
-                   user=user)
-        return cust"""
-
 
 class RegisterForm(ModelForm):
     email = forms.EmailField(max_length=256, label="Email")

@@ -24,7 +24,6 @@
                 <ul class="nav">
                     {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
-                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
                     {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li class="active"><a href="/analysis">Analytics</a></li>{% endif %}
                 </ul>
@@ -71,7 +70,11 @@
                                 {% if forloop.counter == 7 or forloop.counter == 8 %}
                                     <td style="text-align: center">{{ attribute|date:"d M y, Hi" }}</td>
                                 {% elif forloop.counter == 1 %}
-                                    <td style="text-align: center"><a href="/viewCompany/id={{ attribute }}">{{ attribute }}</a>
+                                    <td style="text-align: center"><a href="/viewCompanyProfile/id={{ attribute }}">{{ attribute }}</a>
+                                {% elif forloop.counter == 3 %}
+                                    <td style="text-align: center"><a href="/customer/viewJobs/j_id={{ attribute }}">{{ attribute }}</a>
+                                {% elif forloop.counter == 9 %}
+                                    <td style="text-align: center"><a href="/user/id={{ attribute }}">{{ attribute }}</a>
                                 {% else %}
                                     <td style="text-align: center">{{ attribute }}</td>
                                 {% endif %}

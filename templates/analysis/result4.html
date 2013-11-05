@@ -24,7 +24,6 @@
                 <ul class="nav">
                     {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
-                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
                     {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li class="active"><a href="/analysis">Analytics</a></li>{% endif %}
                 </ul>
@@ -57,9 +56,13 @@
                 {% for coy in coyCust %}
                     <tr>
                         {% for attribute in coy %}
-                            <td style="text-align: center">{{ attribute }}</td>
+                            {% if forloop.counter == 3 %}
+                                <td style="text-align: center">{{ attribute|floatformat }}</td>
+                            {% else %}
+                                <td style="text-align: center">{{ attribute }}</td>
+                            {% endif %}
                         {% endfor %}
-                        <td style="text-align: center"><a href="/viewCompany/id={{ coy.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
+                        <td style="text-align: center"><a href="/viewCompanyProfile/id={{ coy.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
                     </tr>
                 {% endfor %}
             </table>

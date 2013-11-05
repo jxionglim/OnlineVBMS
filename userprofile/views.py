@@ -46,7 +46,6 @@ def register(request):
             user.first_name = request.POST['firstName']
             user.last_name = request.POST['lastName']
             user.save()
-            print dbaccess.getMaxCustomerId()
             cusId = dbaccess.getMaxCustomerId()+1
             params = [
                 cusId,
