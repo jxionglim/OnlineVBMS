@@ -95,7 +95,11 @@ def viewProfile(request):
     if not request.get_full_path().__contains__('id') and request.user.is_superuser:
         return HttpResponseRedirect('/')
     if request.get_full_path().__contains__('id') and not request.user.is_superuser:
-        return HttpResponseRedirect('/')
+        inputCusId = int(request.get_full_path().split('id=')[-1])
+        if inputCusId != dbaccess.getCustIdByUserId(request.user.id):
+            return HttpResponseRedirect('/')
+        else:
+            custRow = dbaccess.getCustInfoById(int(request.get_full_path().split('id=')[-1]))
     else:
         if request.get_full_path().__contains__('id'):
             custRow = dbaccess.getCustInfoById(int(request.get_full_path().split('id=')[-1]))
