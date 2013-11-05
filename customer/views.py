@@ -19,7 +19,7 @@ def dictfetchall(cursor):
 
 @csrf_exempt
 def addJob(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() or request.user.is_superuser:
         return HttpResponseRedirect('/home')
     if request.method == 'POST':
         form = JobForm(request.POST)
@@ -40,7 +40,7 @@ def addJob(request):
 
 @csrf_exempt
 def addTrip(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() or request.user.is_superuser:
         return HttpResponseRedirect('/home')
     if request.method == 'POST':
         form = TripForm(request, request.POST)
@@ -402,8 +402,9 @@ def addTrip(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
+
 def calculateAmount(numSedan, numMpv, numLuxury, numBus, numMini, numCoach, num1, num3, num5, hours):
-    totalAmount = int(numSedan)*15 + int(numMpv)*50 + int(numLuxury)*25 + int(numBus)*30 + int(numMini)*20 + int(numCoach)*40 + int(num1)*15 + int(num3)*25 + int(num5)*40
+    totalAmount = int(numSedan)*15 + int(numMpv)*25 + int(numLuxury)*50 + int(numBus)*30 + int(numMini)*20 + int(numCoach)*40 + int(num1)*15 + int(num3)*25 + int(num5)*40
     return totalAmount*hours
 
 
@@ -573,37 +574,48 @@ def matchVehicleDriver(listOfAvailableVehicles, listOfAvailableDrivers, roundTri
 
 @csrf_exempt
 def viewJobs(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() or request.user.is_superuser:
         return HttpResponseRedirect('/home')
     cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
     listOfJobs = list(list(x) for x in dbaccess.getAllJobsByCusId(cusId))
+    coyId = 0
+    for x in listOfJobs:
+        coyId = x[3]
     for x in listOfJobs:
         x[1] = x[1].date().strftime("%d-%m-%Y")
+        x[2] = dbaccess.getCusEmailById(int(x[2]))
+        x[3] = dbaccess.getCoyNameById(int(x[3]))
     print listOfJobs
     return render_to_response('customer/viewJobs.html', {
-        'listOfJobs': listOfJobs
+        'listOfJobs': listOfJobs,
+        'coyId': coyId
     }, context_instance=RequestContext(request))
 
 @csrf_exempt
 def viewTripsOfJob(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() and not request.user.is_superuser:
         return HttpResponseRedirect('/home')
     jobId = request.get_full_path().split('=')[1]
     print jobId
     listOfTrips = list(list(x) for x in dbaccess.getAllTripsByJobId(jobId))
+    cusId = 0
+    for x in listOfTrips:
+        cusId = int(x[7])
     for x in listOfTrips:
         x[1] = x[1].strftime("%d-%m-%Y %H:%M:%S")
         x[2] = x[2].strftime("%d-%m-%Y %H:%M:%S")
+        x[7] = dbaccess.getCusEmailById(int(x[7]))
     print listOfTrips
 
     return render_to_response('customer/viewTripsOfJob.html', {
         'listOfTrips': listOfTrips,
-        'jobId': jobId
+        'jobId': jobId,
+        'cusId': cusId
     }, context_instance=RequestContext(request))
 
 @csrf_exempt
 def deleteTripOfJob(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() and not request.user.is_superuser:
         return HttpResponseRedirect('/home')
     tripId = request.get_full_path().split('=')[1]
     print "OMG"
@@ -619,12 +631,18 @@ def deleteTripOfJob(request):
 
 @csrf_exempt
 def editTripOfJob(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() and not request.user.is_superuser:
         return HttpResponseRedirect('/home')
-    tripId = request.get_full_path().split('=')[1]
+    tripInfo, cusInfo = request.get_full_path().split('&&')
+    tripId = tripInfo.split('=')[1]
+    cusId = 0
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
+    else:
+        cusId = cusInfo.split('=')[1]
     tripRow = dbaccess.getTripDetails(tripId)
     coyId = dbaccess.getCoyOfTrip(tripId)
-    cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
+
     startDateTime = datetime.datetime.strptime(str(tripRow[0][1]), "%Y-%m-%d %H:%M:%S")
     endDateTime = datetime.datetime.strptime(str(tripRow[0][2]), "%Y-%m-%d %H:%M:%S")
     initialHours = math.floor((endDateTime-startDateTime).total_seconds()/3600)
@@ -2453,7 +2471,6 @@ def editTripOfJob(request):
                 print toDelete
                 print toAdd
 
-
                 if addingSuccess:
                     print tripId
                     print jobId
@@ -2546,6 +2563,7 @@ def editTripOfJob(request):
     return render_to_response('customer/editTrip.html', {
         'form': form,
         'tripId': tripId,
+        'cusId': cusId,
         'sedanAmt': noOfSedanCars,
         'mpvAmt': noOfMpvCars,
         'luxuryAmt': noOfLuxuryCars,

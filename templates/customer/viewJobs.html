@@ -1,30 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <title></title>
+    <meta charset="utf-8">
+    <title>View Jobs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
-<table>
-    <tr>
-        <td width="150">Job ID</td>
-        <td width="150">Date Created</td>
-        <td width="150">Customer ID</td>
-        <td width="150">Company ID</td>
-        <td width="150">Amount</td>
-        <td width="150">Actions</td>
-    </tr>
-    {% for job in listOfJobs %}
-        <tr>
-        {% for attribute in job %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        {% for attribute in job %}
-            {% if forloop.counter == 1 %}
-                <td width="150"><a href="/customer/viewJobs/j_id={{ attribute }}">View Trips</a></td>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VMBS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li class="active"><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="hero-unit">
+                <legend><strong>List of Jobs</strong></legend>
+                {% if listOfJobs|length <= 0 %}
+                    <small>There are no jobs in the system.</small>
+                {% else %}
+                    <table class="table table-condensed table-hover table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <td style="text-align: center">Job Id</td>
+                            <td style="text-align: center">Date Created</td>
+                            <td style="text-align: center">Company Name</td>
+                            <td style="text-align: center">Amount</td>
+                            <td style="text-align: center">View Trips</td>
+                        </tr>
+                        </thead>
+                        {% for job in listOfJobs %}
+                            <tr>
+                                <td style="text-align: center">{{ job.0 }}</td>
+                                <td style="text-align: center">{{ job.1 }}</td>
+                                <td style="text-align: center"><a href="/viewCompanyProfile/id={{ coyId }}">{{ job.3 }}</a></td>
+                                <td style="text-align: center">{{ job.4 }}</td>
+                                <td style="text-align: center"><a href="/customer/viewJobs/j_id={{ job.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
 </body>
 </html>

@@ -1,10 +1,92 @@
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Add Trip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<form action="e_id={{ tripId }}" method="post">{% csrf_token %}
-  {{ form.as_p }}
-   <input type="submit" value="Make Changes" />
-</form>
-<form action="addVehicle" method="get">
-    <input type="submit" value="Next" />{% csrf_token %}
-</form>
-{% endblock %}
+    <!-- Le styles -->
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VBMS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="hero-unit">
+                    <legend><strong>Trip Information</strong></legend>
+                    {% if overallSuccess == False %}
+                        <script>alert("Adding of Trip is unsuccessful")</script>
+                    {% endif %}
+                    {% if overallSuccess == True %}
+                        <script>alert("Adding of Trip is successful")</script>
+                    {% endif %}
+                    <form class="form-horizontal" action="e_id={{ tripId }}&&c_id={{ cusId }}" method="post">
+                        {% for fields in form %}
+                            <div class="control-group">
+                                <label class="control-label span3">{{ fields.label }}</label>
+                                <div class="controls offset3">
+                                    {{ fields }} {% for error in fields.errors %} <span class="help-inline"><small><p class="text-error">{{ error }}</p></small></span> {% endfor %}
+                                    {% if fields.label == "Start Date" or fields.label == "Start Time" or fields.label == "End Date" or fields.label == "End Time" %}<br/><span class="help-inline"><small><p class="text-info">{{ fields.help_text }}</p></small></span>{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="span2 offset5"><button class="btn btn-small btn-info" type="submit">Make Changes</button></div>
+                    </form>
+                    {% if status == 'normal' %}
+                        <div class="span2"><button class="btn btn-small btn-info" type="submit" onclick="window.location='/admin/viewCompany';">Finish</button></div>
+                    {% elif status == 'redirect' %}
+                        <div class="span2"><button class="btn btn-small btn-info" type="submit" onclick="window.location='/admin/viewVehicle/id={{ coyId }}';">Finish</button></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
