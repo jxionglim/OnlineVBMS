@@ -20,7 +20,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="/home">VMBS</a>
+            <a class="brand" href="/home">VBMS</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
                     {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
@@ -31,7 +31,7 @@
                 </ul>
                 <form class="navbar-form pull-right">
                     <ul class="nav">
-                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Manager</a></li>{% endif %}
                         {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
                         {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
                         <a class="brand" href="/logout">Logout</a>
