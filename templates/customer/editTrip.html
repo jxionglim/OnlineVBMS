@@ -1,6 +1,6 @@
 {% block content %}
 
-<form action="e_id={{ tripId }}" method="post">{% csrf_token %}
+<form action="e_id={{ tripId }}&&c_id={{ cusId }}" method="post">{% csrf_token %}
   {{ form.as_p }}
    <input type="submit" value="Make Changes" />
 </form>

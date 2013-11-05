@@ -8,6 +8,22 @@ def getCompanyNames():
     return cursor.fetchall()
 
 
+def getCusEmailById(cusId):
+    cursor = connection.cursor()
+    query = 'SELECT email FROM customer WHERE cusId = %s'
+    cursor.execute(query, [cusId])
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
+
+
+def getCoyNameById(coyId):
+    cursor = connection.cursor()
+    query = 'SELECT coyName FROM company WHERE coyId = %s'
+    cursor.execute(query, [coyId])
+    row = cursor.fetchone()
+    return row[0] if row[0] is not None else 0
+
+
 def getCoyIdByName(coyName):
     cursor = connection.cursor()
     query = 'SELECT coyId FROM company WHERE coyName=%s'
