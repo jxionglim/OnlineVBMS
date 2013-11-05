@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>VBMS Analytics</title>
+    <title>Analytics</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -29,7 +29,7 @@
                 </ul>
                 <form class="navbar-form pull-right">
                     <ul class="nav">
-                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Manager</a></li>{% endif %}
                         {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
                         {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
                         <a class="brand" href="/logout">Logout</a>
