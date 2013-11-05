@@ -33,9 +33,25 @@ def insertTrip(params):
     return params[0]
 
 
+def updateTrip(params):
+    cursor = connection.cursor()
+    query = "UPDATE Trip SET startTime = TO_DATE(%s,'DD-MM-YYYY HH24:MI:SS'), endTime = TO_DATE(%s,'DD-MM-YYYY HH24:MI:SS'), startLocation = %s, endLocation = %s, comments = %s WHERE tripId = %s"
+    cursor.execute(query, params)
+    transaction.commit_unless_managed()
+    return params[0]
+
+
 def insertReqResource(params):
     cursor = connection.cursor()
     query = "INSERT INTO reqResource VALUES (%s,%s,%s,%s,%s,%s,%s)"
+    cursor.execute(query, params)
+    transaction.commit_unless_managed()
+    return params[0]
+
+
+def deleteReqResource(params):
+    cursor = connection.cursor()
+    query = "DELETE FROM reqResource WHERE carplateNo = %s AND roundTrip = %s AND driverId = %s AND coyId = %s AND tripId = %s AND jobId = %s AND cusId = %s"
     cursor.execute(query, params)
     transaction.commit_unless_managed()
     return params[0]
@@ -275,9 +291,9 @@ def getNoOfLorriesByCarplateNos(params):
 
 def checkTimingClash(params):
     cursor = connection.cursor()
-    query = "select DISTINCT(rr.driverId) " \
-            "from reqResource rr, trip t " \
-            "where rr.tripId = t.tripId " \
+    query = "SELECT DISTINCT(rr.driverId) " \
+            "FROM reqResource rr, trip t " \
+            "WHERE rr.tripId = t.tripId " \
             "AND t.tripId <> %s " \
             "AND rr.driverId = %s " \
             "AND (t.startTime >= TO_DATE(%s,'DD-MM-YYYY HH24:MI:SS') AND t.startTime < TO_DATE(%s,'DD-MM-YYYY HH24:MI:SS') " \

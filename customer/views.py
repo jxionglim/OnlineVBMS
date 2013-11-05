@@ -2430,6 +2430,48 @@ def editTripOfJob(request):
                 print toDelete
                 print toAdd
 
+
+                if addingSuccess:
+                    print tripId
+                    print jobId
+                    print cusId
+
+                    updatedTripParams = [
+                        changedStartDateTimeString,
+                        changedEndDateTimeString,
+                        request.POST['startLocation'],
+                        request.POST['endLocation'],
+                        request.POST['comments'],
+                        tripId
+                    ]
+                    dbaccess.updateTrip(updatedTripParams)
+
+                    print "OVERALL A SUCCESS"
+                    for x in toDelete:
+                        resourceParams = [
+                            x[0],
+                            x[1],
+                            x[2],
+                            x[3],
+                            x[4],
+                            x[5],
+                            x[6]
+                        ]
+                        dbaccess.deleteReqResource(resourceParams)
+
+                    for x in toAdd:
+                        resourceParams = [
+                            x[0],
+                            x[1],
+                            x[2],
+                            x[3],
+                            x[4],
+                            x[5],
+                            x[6]
+                        ]
+                        dbaccess.insertReqResource(resourceParams)
+                else:
+                    print "OVERALL A FAIL"
                 return HttpResponseRedirect('/customer/viewJobs/j_id=' + str(jobId))
     else:
         startDate = str(tripRow[0][1]).split(" ")[0]
