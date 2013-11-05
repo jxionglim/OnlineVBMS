@@ -258,7 +258,6 @@ def viewCompanyProfile(request):
         'lorryDetails': lorryDetails
     }, context_instance=RequestContext(request))
 
-
 @csrf_exempt
 def viewCompany(request):
     if not request.user.is_superuser:
