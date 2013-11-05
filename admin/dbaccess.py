@@ -1,4 +1,5 @@
 from django.db import connection, transaction
+import datetime
 
 
 def getMaxCompanyId():
@@ -158,7 +159,7 @@ def getDriverByDid(id):
 
 def getVehiclesById(id):
     cursor = connection.cursor()
-    query = "SELECT carplateNo, iuNo, manufacturer, model, capacity, transType, vehType FROM VEHICLE WHERE coyId=%s"
+    query = "SELECT carplateNo, iuNo, manufacturer, model, transType, vehType FROM VEHICLE WHERE coyId=%s"
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
@@ -174,7 +175,7 @@ def getCoyIdByCarplateNo(carplateNo):
 
 def getCarsById(id):
     cursor = connection.cursor()
-    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, c.category FROM VEHICLE v, CAR c WHERE v.coyId=%s AND v.carplateNo = c.carplateNo"
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.transType, c.category FROM VEHICLE v, CAR c WHERE v.coyId=%s AND v.carplateNo = c.carplateNo"
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
@@ -182,7 +183,7 @@ def getCarsById(id):
 
 def getBusesById(id):
     cursor = connection.cursor()
-    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, b.category FROM VEHICLE v, BUS b WHERE v.coyId=%s AND v.carplateNo = b.carplateNo"
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.transType, b.category FROM VEHICLE v, BUS b WHERE v.coyId=%s AND v.carplateNo = b.carplateNo"
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
@@ -190,7 +191,7 @@ def getBusesById(id):
 
 def getLorriesById(id):
     cursor = connection.cursor()
-    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, l.tons FROM VEHICLE v, LORRY l WHERE v.coyId=%s AND v.carplateNo = l.carplateNo"
+    query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.transType, l.tons FROM VEHICLE v, LORRY l WHERE v.coyId=%s AND v.carplateNo = l.carplateNo"
     cursor.execute(query, [id])
     row = cursor.fetchall()
     return row
@@ -241,3 +242,30 @@ def getNumVehByCatByCoy(id):
     cursor.execute(query, [id])
     rows = cursor.fetchall()
     return rows
+
+
+def checkIfCompanyHaveTrips(id):
+    now = datetime.datetime.now()
+    cursor = connection.cursor()
+    query = "SELECT * FROM COMPANY c WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE c.coyId=r.coyId AND t.tripId=r.tripId AND %s > t.endTime and c.coyId=%s)"
+    cursor.execute(query,[now,id])
+    row = cursor.fetchone()
+    return False if row is not None else True
+
+
+def checkIfDriverHaveTrips(id):
+    now = datetime.datetime.now()
+    cursor = connection.cursor()
+    query = "SELECT * FROM DRIVER d WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE d.driverId=r.driverId AND t.tripId=r.tripId AND %s > t.endTime and d.driverId=%s)"
+    cursor.execute(query,[now,id])
+    row = cursor.fetchone()
+    return False if row is not None else True
+
+
+def checkIfVehicleHaveTrips(carplateNo):
+    now = datetime.datetime.now()
+    cursor = connection.cursor()
+    query = "SELECT * FROM VEHICLE v WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE v.carplateNo=r.carplateNo AND t.tripId=r.tripId AND %s > t.endTime and v.carplateNo=%s)"
+    cursor.execute(query,[now,carplateNo])
+    row = cursor.fetchone()
+    return False if row is not None else True

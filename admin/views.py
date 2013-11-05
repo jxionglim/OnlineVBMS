@@ -316,8 +316,6 @@ def viewJobs(request):
         'allJobs': allJobs
     }, context_instance=RequestContext(request))
 
-
-
 @csrf_exempt
 def editCompany(request):
     if not request.user.is_superuser:
@@ -382,21 +380,34 @@ def editDriver(request):
 def deleteCompany(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/home')
-    dbaccess.deleteCompany(request.get_full_path().split('=')[1])
-    return HttpResponseRedirect('/admin/viewCompany')
+    if dbaccess.checkIfCompanyHaveTrips(request.get_full_path().split('=')[1]) == False:
+        return render_to_response('admin/deleteCompanyError.html', {}, context_instance=RequestContext(request))
+    else:
+        dbaccess.deleteCompany(request.get_full_path().split('=')[1])
+        return HttpResponseRedirect('/admin/viewCompany')
 
 @csrf_exempt
 def deleteDriver(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/home')
     coyId = dbaccess.getDriverByDid(request.get_full_path().split('=')[1])[5]
-    dbaccess.deleteDriver(request.get_full_path().split('=')[1])
-    return HttpResponseRedirect('/admin/viewDriver/id=' + str(coyId))
+    if dbaccess.checkIfDriverHaveTrips(request.get_full_path().split('=')[1]) == False:
+        return render_to_response('admin/deleteDriverError.html', {
+            'coyId': coyId
+        }, context_instance=RequestContext(request))
+    else:
+        dbaccess.deleteDriver(request.get_full_path().split('=')[1])
+        return HttpResponseRedirect('/admin/viewDriver/id=' + str(coyId))
 
 @csrf_exempt
 def deleteVehicle(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/home')
     coyId = dbaccess.getCoyIdByCarplateNo(request.get_full_path().split('=')[1])
-    dbaccess.deleteVehicle(request.get_full_path().split('=')[1])
-    return HttpResponseRedirect('/admin/viewVehicle/id=' + str(coyId))
+    if dbaccess.checkIfVehicleHaveTrips(request.get_full_path().split('=')[1]) == False:
+        return render_to_response('admin/deleteVehicleError.html', {
+            'coyId': coyId
+        }, context_instance=RequestContext(request))
+    else:
+        dbaccess.deleteVehicle(request.get_full_path().split('=')[1])
+        return HttpResponseRedirect('/admin/viewVehicle/id=' + str(coyId))

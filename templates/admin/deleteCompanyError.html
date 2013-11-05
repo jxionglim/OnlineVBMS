@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>View Jobs</title>
+    <title>Delete Company Error</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Le styles -->
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -20,12 +20,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="/home">VMBS</a>
+            <a class="brand" href="/home">VBMS</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
                     {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
-                    {% if request.user.is_superuser == True %}<li class="active"><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
                     {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
                 </ul>
@@ -44,41 +44,11 @@
 
 <div class="container">
     <div class="hero-unit">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="hero-unit">
-                <legend><strong>List of Jobs</strong></legend>
-                {% if allJobs|length <= 0 %}
-                    <small>There are no jobs in the system.</small>
-                {% else %}
-                    <table class="table table-condensed table-hover table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <td style="text-align: center">S/N</td>
-                            <td style="text-align: center">Date Created</td>
-                            <td style="text-align: center">Amount</td>
-                            <td style="text-align: center">Company Name</td>
-                            <td style="text-align: center">Customer</td>
-                            <td style="text-align: center">Action</td>
-                        </tr>
-                        </thead>
-                        {% for job in allJobs %}
-                            <tr>
-                                <td style="text-align: center">{{ job.0 }}</td>
-                                <td style="text-align: center">{{ job.1 }}</td>
-                                <td style="text-align: center">{{ job.2 }}</td>
-                                <td style="text-align: center"><a href="../viewCompanyProfile/id={{ job.3 }}">{{ job.4 }}</a></td>
-                                <td style="text-align: center"><a href="/user/id={{ job.6 }}">{{ job.5 }}</a></td>
-                                <td style="text-align: center"><input type="image" src="/static/images/search-icon.png" onclick="window.location='/customer/viewJobs/j_id={{ job.0 }}';"></td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                {% endif %}
-                </div>
-            </div>
-        </div>
+        <legend><strong>Delete Company</strong></legend>
+        <small>Unable to delete company. There are existing jobs associated with the company.</small>
+        <br>
+        <button class="btn btn-small btn-info" type="submit" onclick="window.location='/admin/viewCompany';">Back</button>
     </div>
-
     <hr>
 
     <footer>

@@ -50,28 +50,32 @@
                     <legend><strong>Driver Details</strong>&nbsp
                         <input type="image" src="/static/images/add-icon.png" onclick="window.location='/admin/addDriver/id={{ coyId }}';">
                     </legend>
-                    <table class="table table-condensed table-hover table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <td style="text-align: center">S/N</td>
-                            <td style="text-align: center">First Name</td>
-                            <td style="text-align: center">Last Name</td>
-                            <td style="text-align: center">Contact Number</td>
-                            <td style="text-align: center">Driving Class</td>
-                            <td style="text-align: center">Action</td>
-                        </tr>
-                        </thead>
-                        {% for driver in drivers %}
+                    {% if drivers|length <= 0 %}
+                        <small>There are no drivers in the system.</small>
+                    {% else %}
+                        <table class="table table-condensed table-hover table-striped table-bordered">
+                            <thead>
                             <tr>
-                                <td style="text-align: center">{{ driver.0 }}</td>
-                                <td style="text-align: center">{{ driver.1 }}</td>
-                                <td style="text-align: center">{{ driver.2 }}</td>
-                                <td style="text-align: center">{{ driver.3 }}</td>
-                                <td style="text-align: center">{{ driver.4 }}</td>
-                                <td style="text-align: center"><input type="image" src="/static/images/edit-icon.png" onclick="window.location='/admin/editDriver/d_id={{ driver.0 }}';">&nbsp&nbsp<input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteDriver/d_id={{ driver.0 }}';"></td>
+                                <td style="text-align: center">S/N</td>
+                                <td style="text-align: center">First Name</td>
+                                <td style="text-align: center">Last Name</td>
+                                <td style="text-align: center">Contact Number</td>
+                                <td style="text-align: center">Driving Class</td>
+                                <td style="text-align: center">Action</td>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            </thead>
+                            {% for driver in drivers %}
+                                <tr>
+                                    <td style="text-align: center">{{ driver.0 }}</td>
+                                    <td style="text-align: center">{{ driver.1 }}</td>
+                                    <td style="text-align: center">{{ driver.2 }}</td>
+                                    <td style="text-align: center">{{ driver.3 }}</td>
+                                    <td style="text-align: center">{{ driver.4 }}</td>
+                                    <td style="text-align: center"><input type="image" src="/static/images/edit-icon.png" onclick="window.location='/admin/editDriver/d_id={{ driver.0 }}';">&nbsp&nbsp<input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteDriver/d_id={{ driver.0 }}';"></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
                 </div>
             </div>
         </div>

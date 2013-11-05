@@ -137,7 +137,8 @@ class AddVehicleForm(forms.Form):
     iuNo = forms.IntegerField(label="IU Number")
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
-    transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Note: For lorry type vehicles, Transmission Type is Manual by default.")
+    transType = forms.ChoiceField(choices=[('', "Please select an option"),('manual', "Manual"),('auto', "Auto")], label="Transmission Type", help_text="Note: For lorry type vehicles, Transmission Type is Manual by default.")
+    """transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Note: For lorry type vehicles, Transmission Type is Manual by default.")"""
     category = forms.CharField(max_length=9, label="Category", validators=[validateBlank], required=False)
     tons = forms.IntegerField(label="Tons", required=False)
 
@@ -183,8 +184,8 @@ class AddVehicleForm(forms.Form):
             self._errors["tons"] = self.error_class([msg])
         return cleaned_data
 
-    def clean_transType(self):
+    """def clean_transType(self):
         transType = self.cleaned_data.get('transType', '')
         if transType != "manual" and transType != "auto":
             raise forms.ValidationError("Format: manual/auto")
-        return transType
+        return transType"""

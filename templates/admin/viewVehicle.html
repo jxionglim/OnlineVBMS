@@ -50,92 +50,90 @@
                     <legend><strong>Vehicle Details</strong>&nbsp
                         <input type="image" src="/static/images/add-icon.png" onclick="window.location='/admin/addVehicle/id={{ coyId }}';">
                     </legend>
-                    {% if carStatus == True %}
-                        <strong>Cars</strong>
-                        <table class="table table-condensed table-hover table-striped table-bordered">
-                            <thead>
-                            <tr>
-                                <td style="text-align: center">Carplate No</td>
-                                <td style="text-align: center">iuNo</td>
-                                <td style="text-align: center">Manufacturer</td>
-                                <td style="text-align: center">Model</td>
-                                <td style="text-align: center">Capacity</td>
-                                <td style="text-align: center">Transmission Type</td>
-                                <td style="text-align: center">Category</td>
-                                <td style="text-align: center">Action</td>
-                            </tr>
-                            </thead>
-                            {% for car in cars %}
+                    {% if carStatus == False and busStatus == False and lorryStatus == False %}
+                        <small>There are no vehicles in the system.</small>
+                    {% else %}
+                        {% if carStatus == True %}
+                            <strong>Cars</strong>
+                            <table class="table table-condensed table-hover table-striped table-bordered">
+                                <thead>
                                 <tr>
-                                    <td style="text-align: center">{{ car.0 }}</td>
-                                    <td style="text-align: center">{{ car.1 }}</td>
-                                    <td style="text-align: center">{{ car.2 }}</td>
-                                    <td style="text-align: center">{{ car.3 }}</td>
-                                    <td style="text-align: center">{{ car.4 }}</td>
-                                    <td style="text-align: center">{{ car.5 }}</td>
-                                    <td style="text-align: center">{{ car.6 }}</td>
-                                    <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ car.0 }}';"></td>
+                                    <td style="text-align: center">Carplate No</td>
+                                    <td style="text-align: center">iuNo</td>
+                                    <td style="text-align: center">Manufacturer</td>
+                                    <td style="text-align: center">Model</td>
+                                    <td style="text-align: center">Transmission Type</td>
+                                    <td style="text-align: center">Category</td>
+                                    <td style="text-align: center">Action</td>
                                 </tr>
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-                    {% if busStatus == True %}
-                        <strong>Buses</strong>
-                        <table class="table table-condensed table-hover table-striped table-bordered">
-                            <thead>
-                            <tr>
-                                <td style="text-align: center">Carplate No</td>
-                                <td style="text-align: center">iuNo</td>
-                                <td style="text-align: center">Manufacturer</td>
-                                <td style="text-align: center">Model</td>
-                                <td style="text-align: center">Capacity</td>
-                                <td style="text-align: center">Transmission Type</td>
-                                <td style="text-align: center">Category</td>
-                                <td style="text-align: center">Action</td>
-                            </tr>
-                            </thead>
-                            {% for bus in buses %}
+                                </thead>
+                                {% for car in cars %}
+                                    <tr>
+                                        <td style="text-align: center">{{ car.0 }}</td>
+                                        <td style="text-align: center">{{ car.1 }}</td>
+                                        <td style="text-align: center">{{ car.2 }}</td>
+                                        <td style="text-align: center">{{ car.3 }}</td>
+                                        <td style="text-align: center">{{ car.4 }}</td>
+                                        <td style="text-align: center">{{ car.5 }}</td>
+                                        <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ car.0 }}';"></td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+                        {% if busStatus == True %}
+                            <strong>Buses</strong>
+                            <table class="table table-condensed table-hover table-striped table-bordered">
+                                <thead>
                                 <tr>
-                                    <td style="text-align: center">{{ bus.0 }}</td>
-                                    <td style="text-align: center">{{ bus.1 }}</td>
-                                    <td style="text-align: center">{{ bus.2 }}</td>
-                                    <td style="text-align: center">{{ bus.3 }}</td>
-                                    <td style="text-align: center">{{ bus.4 }}</td>
-                                    <td style="text-align: center">{{ bus.5 }}</td>
-                                    <td style="text-align: center">{{ bus.6 }}</td>
-                                    <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ bus.0 }}';"></td>
+                                    <td style="text-align: center">Carplate No</td>
+                                    <td style="text-align: center">iuNo</td>
+                                    <td style="text-align: center">Manufacturer</td>
+                                    <td style="text-align: center">Model</td>
+                                    <td style="text-align: center">Transmission Type</td>
+                                    <td style="text-align: center">Category</td>
+                                    <td style="text-align: center">Action</td>
                                 </tr>
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-                    {% if lorryStatus == True %}
-                        <strong>Lorries</strong>
-                        <table class="table table-condensed table-hover table-striped table-bordered">
-                            <thead>
-                            <tr>
-                                <td style="text-align: center">Carplate No</td>
-                                <td style="text-align: center">iuNo</td>
-                                <td style="text-align: center">Manufacturer</td>
-                                <td style="text-align: center">Model</td>
-                                <td style="text-align: center">Capacity</td>
-                                <td style="text-align: center">Transmission Type</td>
-                                <td style="text-align: center">Tons</td>
-                                <td style="text-align: center">Action</td>
-                            </tr>
-                            </thead>
-                            {% for lorry in lorries %}
+                                </thead>
+                                {% for bus in buses %}
+                                    <tr>
+                                        <td style="text-align: center">{{ bus.0 }}</td>
+                                        <td style="text-align: center">{{ bus.1 }}</td>
+                                        <td style="text-align: center">{{ bus.2 }}</td>
+                                        <td style="text-align: center">{{ bus.3 }}</td>
+                                        <td style="text-align: center">{{ bus.4 }}</td>
+                                        <td style="text-align: center">{{ bus.5 }}</td>
+                                        <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ bus.0 }}';"></td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+                        {% if lorryStatus == True %}
+                            <strong>Lorries</strong>
+                            <table class="table table-condensed table-hover table-striped table-bordered">
+                                <thead>
                                 <tr>
-                                    <td style="text-align: center">{{ lorry.0 }}</td>
-                                    <td style="text-align: center">{{ lorry.1 }}</td>
-                                    <td style="text-align: center">{{ lorry.2 }}</td>
-                                    <td style="text-align: center">{{ lorry.3 }}</td>
-                                    <td style="text-align: center">{{ lorry.4 }}</td>
-                                    <td style="text-align: center">{{ lorry.5 }}</td>
-                                    <td style="text-align: center">{{ lorry.6 }}</td>
-                                    <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ lorry.0 }}';"></td>
+                                    <td style="text-align: center">Carplate No</td>
+                                    <td style="text-align: center">iuNo</td>
+                                    <td style="text-align: center">Manufacturer</td>
+                                    <td style="text-align: center">Model</td>
+                                    <td style="text-align: center">Transmission Type</td>
+                                    <td style="text-align: center">Tons</td>
+                                    <td style="text-align: center">Action</td>
                                 </tr>
-                            {% endfor %}
-                        </table>
+                                </thead>
+                                {% for lorry in lorries %}
+                                    <tr>
+                                        <td style="text-align: center">{{ lorry.0 }}</td>
+                                        <td style="text-align: center">{{ lorry.1 }}</td>
+                                        <td style="text-align: center">{{ lorry.2 }}</td>
+                                        <td style="text-align: center">{{ lorry.3 }}</td>
+                                        <td style="text-align: center">{{ lorry.4 }}</td>
+                                        <td style="text-align: center">{{ lorry.5 }}</td>
+                                        <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ lorry.0 }}';"></td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
