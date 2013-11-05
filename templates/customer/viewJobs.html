@@ -56,7 +56,6 @@
                         <tr>
                             <td style="text-align: center">Job Id</td>
                             <td style="text-align: center">Date Created</td>
-                            <td style="text-align: center">Customer</td>
                             <td style="text-align: center">Company Name</td>
                             <td style="text-align: center">Amount</td>
                             <td style="text-align: center">View Trips</td>
@@ -66,8 +65,7 @@
                             <tr>
                                 <td style="text-align: center">{{ job.0 }}</td>
                                 <td style="text-align: center">{{ job.1 }}</td>
-                                <td style="text-align: center"><a href="/user/id={{ job.3 }}">customer email</a></td>
-                                <td style="text-align: center"><a href="/viewCompanyProfile/id={{ job.3 }}">company name</a></td>
+                                <td style="text-align: center"><a href="/viewCompanyProfile/id={{ coyId }}">{{ job.3 }}</a></td>
                                 <td style="text-align: center">{{ job.4 }}</td>
                                 <td style="text-align: center"><a href="/customer/viewJobs/j_id={{ job.0 }}"><img src="/static/images/search-icon.png" alt="view"></a>
                             </tr>
@@ -92,35 +90,5 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="/static/bootstrap/js/jquery.js"></script>
 <script src="/static/bootstrap/js/bootstrap.js"></script>
-</body>
-</html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<table>
-    <tr>
-        <td width="150">Job ID</td>
-        <td width="150">Date Created</td>
-        <td width="150">Customer ID</td>
-        <td width="150">Company ID</td>
-        <td width="150">Amount</td>
-        <td width="150">Actions</td>
-    </tr>
-    {% for job in listOfJobs %}
-        <tr>
-        {% for attribute in job %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        {% for attribute in job %}
-            {% if forloop.counter == 1 %}
-                <td width="150"><a href="/customer/viewJobs/j_id={{ attribute }}">View Trips</a></td>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
 </body>
 </html>

@@ -72,8 +72,8 @@
                                 <td style="text-align: center">{{ trips.1 }}</td>
                                 <td style="text-align: center">{{ trips.2 }}</td>
                                 <td style="text-align: center">{{ trips.5 }}</td>
-                                <td style="text-align: center"><a href="/user/id={{ trips.3 }}">name</a></td>
-                                <td style="text-align: center"><a href="/customer/viewTrip/e_id={{ trips.0 }}&&c_id={{ trips.7 }}"><img src="/static/images/edit-icon.png" alt="view"></a>&nbsp&nbsp<a href="/customer/viewTrip/d_id={{ trips.0 }}"><img src="/static/images/delete-icon.png" alt="view"></a></td>
+                                <td style="text-align: center"><a href="/user/id={{ cusId }}">{{ trips.7 }}</a></td>
+                                <td style="text-align: center"><a href="/customer/viewTrip/e_id={{ trips.0 }}&&c_id={{ cusId }}"><img src="/static/images/edit-icon.png" alt="view"></a>&nbsp&nbsp<a href="/customer/viewTrip/d_id={{ trips.0 }}"><img src="/static/images/delete-icon.png" alt="view"></a></td>
                             </tr>
                         {% endfor %}
                     </table>
@@ -96,38 +96,5 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="/static/bootstrap/js/jquery.js"></script>
 <script src="/static/bootstrap/js/bootstrap.js"></script>
-</body>
-</html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<table>
-    <tr>
-        <td width="150">Trip ID</td>
-        <td width="150">Start Time</td>
-        <td width="150">End Time</td>
-        <td width="150">Start Location</td>
-        <td width="150">End Location</td>
-        <td width="150">Comments</td>
-        <td width="150">Job ID</td>
-        <td width="150">Customer ID</td>
-        <td width="150">Actions</td>
-    </tr>
-    {% for trip in listOfTrips %}
-        <tr>
-        {% for attribute in trip %}
-            <td width="150">{{ attribute }}</td>
-        {% endfor %}
-        <td width="150">
-            <a href="/customer/viewTrip/e_id={{ trip.0 }}&&c_id={{ trip.7 }}">Edit</a> &nbsp &nbsp
-            <a href="/customer/viewTrip/d_id={{ trip.0 }}">Delete</a>
-        </td>
-
-        </tr>
-    {% endfor %}
-</table>
 </body>
 </html>
