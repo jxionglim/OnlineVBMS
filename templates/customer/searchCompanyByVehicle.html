@@ -1,6 +1,107 @@
-{% block content %}
-<form action="" method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>VBMS Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le styles -->
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/home">VBMS</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/addCompany">Register Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
+                    {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
+                </ul>
+                <form class="navbar-form pull-right">
+                    <ul class="nav">
+                        {% if request.user.is_superuser == True %}<li><a href="/user/addAdmin">Add Admin</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/customer/viewJobs">View Job</a></li>{% endif %}
+                        {% if request.user.is_superuser == False %}<li><a href="/user">View Profile</a></li>{% endif %}
+                        <a class="brand" href="/logout">Logout</a>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <form class="form-search form-horizontal" action="" method="post">
+        <div class="hero-unit">
+            <legend>
+                <strong>Search Company</strong>
+                <small class="offset1"><a href="/home">By location & name</a></small>
+                <small class="offset1"><a href="/searchVehicleAmt">By vehicle amount</a></small>
+                <small class="offset1"><a href="/searchVehicleType">By type of vehicle</a></small>
+
+            </legend>
+            {% for fields in form %}
+                <div class="control-group">
+                    <label class="control-label">{{ fields.label }} </label>
+                    <div class="controls">
+                        {{ fields }} {% for error in fields.errors %} <span class="help-inline"><small><p class="text-error">{{ error }}</p></small></span> {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn offset3">Search</button>
+        </div>
+    </form>
+    {% if search == True %}
+        <div class="hero-unitplain">
+            <legend><strong>Search Results</strong></legend>
+            {% if searchResult|length == 0 %}
+                No results... Try again with another term.
+            {% else %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="text-align: center"><p>Company Id</p></th>
+                        <th style="text-align: center"><p>Company Name</p></th>
+                        <th style="text-align: center"><p>Actions</p></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for records in searchResult %}
+                        <tr>
+                            <td style="text-align: center">{{ records.COYID }}</td>
+                            <td style="text-align: center">{{ records.COYNAME }}</td>
+                            <td style="text-align: center"><a href="/viewCompanyProfile/id={{ records.COYID }}"><img src="/static/images/search-icon.png" alt="view"></a>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    {% endif %}
+    <hr>
+
+    <footer>
+        <p>&copy; VBMS</p>
+    </footer>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>

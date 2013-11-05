@@ -66,15 +66,15 @@
                     </tr>
                     {% for trip in tripInfo %}
                         <tr>
-                            <td style="text-align: center"><a href="/viewCompanyProfile/id={{ trip.0 }}">{{ trip.0 }}</a>
+                            <td style="text-align: center"><a href="/viewCompanyProfile/id={{ trip.0 }}">{{ trip.0 }}</a></td>
                             <td style="text-align: center">{{ trip.1 }}</td>
-                            <td style="text-align: center"><a href="/customer/viewJobs/j_id={{ trip.2 }}">{{ trip.2 }}</a>
+                            <td style="text-align: center"><a href="/customer/viewJobs/j_id={{ trip.2 }}">{{ trip.2 }}</a></td>
                             <td style="text-align: center">{{ trip.3 }}</td>
                             <td style="text-align: center">{{ trip.4 }}</td>
                             <td style="text-align: center">{{ trip.5 }}</td>
                             <td style="text-align: center">{{ trip.6|date:"d M y, Hi" }}</td>
                             <td style="text-align: center">{{ trip.7|date:"d M y, Hi" }}</td>
-                            <td style="text-align: center"><a href="/user/id={{ trip.9 }}">{{ trip.8 }}</a>
+                            <td style="text-align: center"><a href="/user/id={{ trip.9 }}">{{ trip.8 }}</a></td>
                         </tr>
                     {% endfor %}
                 </table>
