@@ -162,8 +162,8 @@ class TripForm(ModelForm):
 
 
 class searchCompanyByLocationForm(ModelForm):
-    coyName = forms.CharField(max_length=256, label="Company Name:", validators=[validateDelimitComma])
-    streetName = forms.CharField(max_length=256, label="Street Name:", validators=[validateDelimitComma])
+    coyName = forms.CharField(max_length=256, label="Company Name:", validators=[validateDelimitComma], widget=forms.TextInput(attrs={'class': 'span4 search-query'}))
+    streetName = forms.CharField(max_length=256, label="Street Name:", validators=[validateDelimitComma], widget=forms.TextInput(attrs={'class': 'span4 search-query'}))
 
     class Meta:
         model = adminModel.Company

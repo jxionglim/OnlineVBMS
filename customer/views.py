@@ -2575,21 +2575,21 @@ def searchCompanyByLocation(request):
             companyResult = dbaccess.searchCompanies(coyNameArray, streetNameArray)
             companyResultArray = dictfetchall(companyResult)
 
-            request.session['companyResultArray'] = companyResultArray
-            return HttpResponseRedirect('/customer/searchCompanyByLocationResults')
+            return render_to_response('customer/searchCompanyByLocation.html', {
+                'search': True,
+                'searchResult': companyResultArray,
+                'form': form
+            }, context_instance=RequestContext(request))
+        else:
+            return render_to_response('customer/searchCompanyByLocation.html', {
+                'form': form
+            }, context_instance=RequestContext(request))
     else:
         form = searchCompanyByLocationForm()
 
-    return render_to_response('customer/searchCompanyByLocation.html', {
-        'form': form
-    }, context_instance=RequestContext(request))
-
-@csrf_exempt
-def searchCompanyByLocationResults(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/home')
-    return render_to_response('customer/searchCompanyByLocationResults.html', {
-    }, context_instance=RequestContext(request))
+        return render_to_response('customer/searchCompanyByLocation.html', {
+            'form': form
+        }, context_instance=RequestContext(request))
 
 @csrf_exempt
 def searchCompanyByVehicle(request):
@@ -2614,21 +2614,22 @@ def searchCompanyByVehicle(request):
                 companyByVehicleResult = dbaccess.getCompanyByLorryCount(params)
                 companyByVehicleResultArray = dictfetchall(companyByVehicleResult)
 
-            request.session['companyByVehicleResultArray'] = companyByVehicleResultArray
-            return HttpResponseRedirect('/customer/searchCompanyByVehicleResults')
+            return render_to_response('customer/searchCompanyByVehicle.html', {
+                'search': True,
+                'searchResult': companyByVehicleResultArray,
+                'form': form
+            }, context_instance=RequestContext(request))
+        else:
+            return render_to_response('customer/searchCompanyByVehicle.html', {
+                'form': form
+            }, context_instance=RequestContext(request))
     else:
         form = searchCompanyByVehicleForm()
 
-    return render_to_response('customer/searchCompanyByVehicle.html', {
-        'form': form
-    }, context_instance=RequestContext(request))
+        return render_to_response('customer/searchCompanyByVehicle.html', {
+            'form': form
+        }, context_instance=RequestContext(request))
 
-@csrf_exempt
-def searchCompanyByVehicleResults(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/home')
-    return render_to_response('customer/searchCompanyByVehicleResults.html', {
-    }, context_instance=RequestContext(request))
 
 @csrf_exempt
 def searchCompanyByVehicleAmt(request):
@@ -2643,22 +2644,26 @@ def searchCompanyByVehicleAmt(request):
 
             if carChoice == "None" and busChoice == "None" and int(lorryChoice) == 10:
                 form = searchCompanyByVehicleAmtForm()
+
+                return render_to_response('customer/searchCompanyByVehicleAmt.html', {
+                    'form': form
+                }, context_instance=RequestContext(request))
             else:
                 companyByVehicleAmtResult = dbaccess.getCompanyByVehicleTypes(carChoice, busChoice, lorryChoice)
                 companyByVehicleAmtResultArray = dictfetchall(companyByVehicleAmtResult)
 
-                request.session['companyByVehicleAmtResultArray'] = companyByVehicleAmtResultArray
-                return HttpResponseRedirect('/customer/searchCompanyByVehicleAmtResults')
+                return render_to_response('customer/searchCompanyByVehicleAmt.html', {
+                    'search': True,
+                    'searchResult': companyByVehicleAmtResultArray,
+                    'form': form
+                }, context_instance=RequestContext(request))
+        else:
+            return render_to_response('customer/searchCompanyByVehicleAmt.html', {
+                'form': form
+            }, context_instance=RequestContext(request))
     else:
         form = searchCompanyByVehicleAmtForm()
 
-    return render_to_response('customer/searchCompanyByVehicleAmt.html', {
-        'form': form
-    }, context_instance=RequestContext(request))
-
-@csrf_exempt
-def searchCompanyByVehicleAmtResults(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/home')
-    return render_to_response('customer/searchCompanyByVehicleAmtResults.html', {
-    }, context_instance=RequestContext(request))
+        return render_to_response('customer/searchCompanyByVehicleAmt.html', {
+            'form': form
+        }, context_instance=RequestContext(request))

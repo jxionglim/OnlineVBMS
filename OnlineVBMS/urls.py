@@ -2,7 +2,9 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     (r'^$', 'userprofile.views.login'),
-    (r'^home$', 'userprofile.views.home'),
+    (r'^home$', 'customer.views.searchCompanyByLocation'),
+    (r'^searchVehicleAmt$', 'customer.views.searchCompanyByVehicle'),
+    (r'^searchVehicleType$', 'customer.views.searchCompanyByVehicleAmt'),
     (r'^logout$', 'userprofile.views.logout'),
     (r'^register$', 'userprofile.views.register'),
     (r'^viewCompanyProfile/id=\d+?$', 'admin.views.viewCompanyProfile'),
