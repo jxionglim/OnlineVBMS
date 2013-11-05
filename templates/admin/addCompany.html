@@ -25,6 +25,7 @@
                 <ul class="nav">
                     {% if request.user.is_superuser == True %}<li class="active"><a href="/admin/addCompany">Register Company</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/admin/viewCompany">View Company</a></li>{% endif %}
+                    {% if request.user.is_superuser == True %}<li><a href="/admin/viewJobs">View Jobs</a></li>{% endif %}
                     {% if request.user.is_superuser == False %}<li><a href="/customer/addJob">Add Job</a></li>{% endif %}
                     {% if request.user.is_superuser == True %}<li><a href="/analysis">Analytics</a></li>{% endif %}
                 </ul>

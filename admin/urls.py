@@ -14,4 +14,5 @@ urlpatterns = patterns('admin.views',
     (r'^deleteDriver/d_id=\d+?$', 'deleteDriver'),
     (r'^viewVehicle/id=\d+?$', 'viewVehicle'),
     (r'^deleteVehicle/v_id=\d+?$', 'deleteVehicle'),
+    (r'^viewJobs$', 'viewJobs'),
 )

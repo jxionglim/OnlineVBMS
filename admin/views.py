@@ -113,7 +113,6 @@ def registerVehicle(request):
                 request.POST['iuNo'],
                 request.POST['manufacturer'],
                 request.POST['model'],
-                request.POST['capacity'],
                 drivingclass,
                 transType,
                 request.POST['vehType'],
@@ -303,6 +302,21 @@ def viewVehicle(request):
         'busStatus': True if len(buses) != 0 else False,
         'lorryStatus': True if len(lorries) != 0 else False
     }, context_instance=RequestContext(request))
+
+@csrf_exempt
+def viewJobs(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/home')
+    if 'coyId' in request.session:
+        del request.session['coyId']
+    allJobs = list(list(x) for x in dbaccess.getJobs())
+    for x in allJobs:
+        x[1] = x[1].date().strftime("%d-%m-%Y")
+    return render_to_response('admin/viewJobs.html', {
+        'allJobs': allJobs
+    }, context_instance=RequestContext(request))
+
+
 
 @csrf_exempt
 def editCompany(request):

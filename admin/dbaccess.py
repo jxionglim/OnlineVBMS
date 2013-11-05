@@ -21,7 +21,7 @@ def checkUniqueEmail(email):
     cursor = connection.cursor()
     query = "SELECT * FROM Company WHERE email=%s"
     cursor.execute(query, [email])
-    row = cursor.fetchall()
+    row = cursor.fetchone()
     return False if row is not None else True
 
 
@@ -87,7 +87,7 @@ def checkUniqueIuNo(iuNo):
 
 def insertVehicle(params):
     cursor = connection.cursor()
-    query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    query = "INSERT INTO Vehicle VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
     cursor.execute(query, params)
     transaction.commit_unless_managed()
     return params[0]
@@ -192,6 +192,14 @@ def getLorriesById(id):
     cursor = connection.cursor()
     query = "SELECT v.carplateNo, v.iuNo, v.manufacturer, v.model, v.capacity, v.transType, l.tons FROM VEHICLE v, LORRY l WHERE v.coyId=%s AND v.carplateNo = l.carplateNo"
     cursor.execute(query, [id])
+    row = cursor.fetchall()
+    return row
+
+
+def getJobs():
+    cursor = connection.cursor()
+    query = 'SELECT j.jobId, j.dateCreated, j.amount, c.coyId, c.coyName, cs.email, cs.cusId FROM JOB j, COMPANY c, CUSTOMER cs WHERE j.coyId=c.coyId AND j.cusId=cs.cusId'
+    cursor.execute(query)
     row = cursor.fetchall()
     return row
 

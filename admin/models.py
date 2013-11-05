@@ -38,7 +38,6 @@ class Vehicle(models.Model):
     iuNo = models.IntegerField()
     manufacturer = models.CharField(max_length=256)
     model = models.CharField(max_length=256)
-    capacity = models.IntegerField()
     drivingClass = models.CharField(max_length=2)
     transType = models.CharField(max_length=6)
     vehType = models.CharField(max_length=1)
@@ -138,7 +137,6 @@ class AddVehicleForm(forms.Form):
     iuNo = forms.IntegerField(label="IU Number")
     manufacturer = forms.CharField(max_length=256, label="Manufacturer", validators=[validateBlank])
     model = forms.CharField(max_length=256, label="Model", validators=[validateBlank])
-    capacity = forms.IntegerField(label="Sitting Capacity")
     transType = forms.CharField(max_length=6, label="Transmission Type", help_text="Note: For lorry type vehicles, Transmission Type is Manual by default.")
     category = forms.CharField(max_length=9, label="Category", validators=[validateBlank], required=False)
     tons = forms.IntegerField(label="Tons", required=False)
@@ -152,7 +150,6 @@ class AddVehicleForm(forms.Form):
             'iuNo',
             'manufacturer',
             'model',
-            'capacity',
             'transType',
             'category',
             'tons']
