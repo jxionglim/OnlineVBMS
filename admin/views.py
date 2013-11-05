@@ -277,7 +277,20 @@ def viewDriver(request):
     if 'coyId' in request.session:
         del request.session['coyId']
     coyId = request.get_full_path().split('=')[1]
+    driverIDs = dbaccess.checkIfAnyDriverHaveTrips(request.get_full_path().split('=')[1])
+    driverIDTuple = []
+    for driverID in driverIDs:
+        driverIDTuple.append(driverID[0])
+
     drivers = dbaccess.getDriversById(request.get_full_path().split('=')[1])
+    drivers = list(list(x) for x in drivers)
+    for driver in drivers:
+        if driver[0] in driverIDTuple:
+            driver.append("Not Available")
+        else:
+            driver.append("Available")
+    drivers = tuple(tuple(x) for x in drivers)
+
     return render_to_response('admin/viewDriver.html', {
         'drivers': drivers,
         'coyId': coyId
@@ -290,14 +303,44 @@ def viewVehicle(request):
     if 'coyId' in request.session:
         del request.session['coyId']
     coyId = request.get_full_path().split('=')[1]
+    carplateNos = dbaccess.checkIfAnyVehicleHaveTrips(request.get_full_path().split('=')[1])
+    carplateNoTuple = []
+    for carplateNo in carplateNos:
+        carplateNoTuple.append(carplateNo[0])
+
     cars = dbaccess.getCarsById(request.get_full_path().split('=')[1])
+    cars = list(list(x) for x in cars)
+    for car in cars:
+        if car[0] in carplateNoTuple:
+            car.append("Not Available")
+        else:
+            car.append("Available")
+    cars = tuple(tuple(x) for x in cars)
+
     buses = dbaccess.getBusesById(request.get_full_path().split('=')[1])
+    buses = list(list(x) for x in buses)
+    for bus in buses:
+        if bus[0] in carplateNoTuple:
+            bus.append("Not Available")
+        else:
+            bus.append("Available")
+    buses = tuple(tuple(x) for x in buses)
+
     lorries = dbaccess.getLorriesById(request.get_full_path().split('=')[1])
+    lorries = list(list(x) for x in lorries)
+    for lorry in lorries:
+        if lorry[0] in carplateNoTuple:
+            lorry.append("Not Available")
+        else:
+            lorry.append("Available")
+    lorries = tuple(tuple(x) for x in lorries)
+
     return render_to_response('admin/viewVehicle.html', {
         'cars': cars,
         'buses': buses,
         'lorries': lorries,
         'coyId': coyId,
+        'carplateNos': carplateNos,
         'carStatus': True if len(cars) != 0 else False,
         'busStatus': True if len(buses) != 0 else False,
         'lorryStatus': True if len(lorries) != 0 else False

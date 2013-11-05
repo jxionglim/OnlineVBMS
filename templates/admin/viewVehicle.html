@@ -53,6 +53,7 @@
                     {% if carStatus == False and busStatus == False and lorryStatus == False %}
                         <small>There are no vehicles in the system.</small>
                     {% else %}
+                        {{ vehicles }}
                         {% if carStatus == True %}
                             <strong>Cars</strong>
                             <table class="table table-condensed table-hover table-striped table-bordered">
@@ -64,6 +65,7 @@
                                     <td style="text-align: center">Model</td>
                                     <td style="text-align: center">Transmission Type</td>
                                     <td style="text-align: center">Category</td>
+                                    <td style="text-align: center">Availability</td>
                                     <td style="text-align: center">Action</td>
                                 </tr>
                                 </thead>
@@ -75,6 +77,7 @@
                                         <td style="text-align: center">{{ car.3 }}</td>
                                         <td style="text-align: center">{{ car.4 }}</td>
                                         <td style="text-align: center">{{ car.5 }}</td>
+                                        <td style="text-align: center">{{ car.6 }}</td>
                                         <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ car.0 }}';"></td>
                                     </tr>
                                 {% endfor %}
@@ -91,6 +94,7 @@
                                     <td style="text-align: center">Model</td>
                                     <td style="text-align: center">Transmission Type</td>
                                     <td style="text-align: center">Category</td>
+                                    <td style="text-align: center">Availability</td>
                                     <td style="text-align: center">Action</td>
                                 </tr>
                                 </thead>
@@ -102,6 +106,7 @@
                                         <td style="text-align: center">{{ bus.3 }}</td>
                                         <td style="text-align: center">{{ bus.4 }}</td>
                                         <td style="text-align: center">{{ bus.5 }}</td>
+                                        <td style="text-align: center">{{ bus.6 }}</td>
                                         <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ bus.0 }}';"></td>
                                     </tr>
                                 {% endfor %}
@@ -118,6 +123,7 @@
                                     <td style="text-align: center">Model</td>
                                     <td style="text-align: center">Transmission Type</td>
                                     <td style="text-align: center">Tons</td>
+                                    <td style="text-align: center">Availability</td>
                                     <td style="text-align: center">Action</td>
                                 </tr>
                                 </thead>
@@ -129,6 +135,7 @@
                                         <td style="text-align: center">{{ lorry.3 }}</td>
                                         <td style="text-align: center">{{ lorry.4 }}</td>
                                         <td style="text-align: center">{{ lorry.5 }}</td>
+                                        <td style="text-align: center">{{ lorry.6 }}</td>
                                         <td style="text-align: center"><input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteVehicle/v_id={{ lorry.0 }}';"></td>
                                     </tr>
                                 {% endfor %}
