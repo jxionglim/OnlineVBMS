@@ -1,11 +1,12 @@
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from customer.models import JobForm, companySearchForm, TripForm
+from customer.models import JobForm, searchCompanyByLocationForm, TripForm, searchCompanyByVehicleForm, searchCompanyByVehicleAmtForm
 import datetime
 import dbaccess
 from copy import copy, deepcopy
 import userprofile.dbaccess as userProfileDBAccess
+from django.views.decorators.csrf import csrf_exempt
 
 
 def dictfetchall(cursor):
@@ -16,13 +17,15 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
-
+@csrf_exempt
 def addJob(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
         form = JobForm(request.POST)
         if form.is_valid():
             jobId = dbaccess.getMaxJobId()+1
-            cusId = 1 #userProfileDBAccess.getCustIdByUserId(request.user.id)
+            cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
             coyId = request.POST['coyId']
             params = [
                 jobId,
@@ -43,13 +46,15 @@ def addJob(request):
         'form': form
     }, context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def addTrip(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
         form = TripForm(request, request.POST)
         if form.is_valid():
             jobId = request.session.get('jobId')
-            cusId = 1 #userProfileDBAccess.getCustIdByUserId(request.user.id)
+            cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
             coyId = request.session.get('coyId')
             tripId = dbaccess.getMaxTripId()+1
             startDate = request.POST['startDate']
@@ -75,6 +80,12 @@ def addTrip(request):
             sedanAmt = request.POST['sedanAmt']
             mpvAmt = request.POST['mpvAmt']
             luxuryAmt = request.POST['luxuryAmt']
+            busAmt = request.POST['busAmt']
+            miniAmt = request.POST['miniAmt']
+            coachAmt = request.POST['coachAmt']
+            oneTonAmt = request.POST['oneTonAmt']
+            threeTonAmt = request.POST['threeTonAmt']
+            fiveTonAmt = request.POST['fiveTonAmt']
 
             if int(sedanAmt) > 0:
                 sedanParams = [
@@ -159,10 +170,6 @@ def addTrip(request):
                             else:
                                 for x in result:
                                     finalRResource.append(x)
-
-            busAmt = request.POST['busAmt']
-            miniAmt = request.POST['miniAmt']
-            coachAmt = request.POST['coachAmt']
 
             if addingSuccess:
                 if int(busAmt) > 0:
@@ -249,10 +256,6 @@ def addTrip(request):
                             else:
                                 for x in result:
                                     finalRResource.append(x)
-
-            oneTonAmt = request.POST['oneTonAmt']
-            threeTonAmt = request.POST['threeTonAmt']
-            fiveTonAmt = request.POST['fiveTonAmt']
 
             if addingSuccess:
                 if int(oneTonAmt) > 0:
@@ -341,6 +344,10 @@ def addTrip(request):
 
             if addingSuccess:
                 overallSuccess = True
+                print tripId
+                print jobId
+                print cusId
+
                 params = [
                     tripId,
                     startDateTime,
@@ -545,9 +552,11 @@ def matchVehicleDriver(listOfAvailableVehicles, listOfAvailableDrivers, roundTri
 
     return listOfRResource, tuple(tuple(x) for x in listOfAvailableDrivers)
 
-
+@csrf_exempt
 def viewJobs(request):
-    cusId = 1 #userProfileDBAccess.getCustIdByUserId(request.user.id)
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
+    cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
     listOfJobs = list(list(x) for x in dbaccess.getAllJobsByCusId(cusId))
     for x in listOfJobs:
         x[1] = x[1].date().strftime("%d-%m-%Y")
@@ -556,8 +565,10 @@ def viewJobs(request):
         'listOfJobs': listOfJobs
     }, context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def viewTripsOfJob(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     jobId = request.get_full_path().split('=')[1]
     print jobId
     listOfTrips = list(list(x) for x in dbaccess.getAllTripsByJobId(jobId))
@@ -571,8 +582,10 @@ def viewTripsOfJob(request):
         'jobId': jobId
     }, context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def deleteTripOfJob(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     tripId = request.get_full_path().split('=')[1]
     print "OMG"
     print tripId
@@ -585,16 +598,14 @@ def deleteTripOfJob(request):
 
     return HttpResponseRedirect('/customer/viewJobs/j_id=' + str(jobId))
 
-
+@csrf_exempt
 def editTripOfJob(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     tripId = request.get_full_path().split('=')[1]
     tripRow = dbaccess.getTripDetails(tripId)
     coyId = dbaccess.getCoyOfTrip(tripId)
-    cusId = 1 #userProfileDBAccess.getCustIdByUserId(request.user.id)
-    startDate = str(tripRow[0][1]).split(" ")[0]
-    startTime = str(tripRow[0][1]).split(" ")[1]
-    endDate = str(tripRow[0][2]).split(" ")[0]
-    endTime = str(tripRow[0][2]).split(" ")[1]
+    cusId = userProfileDBAccess.getCustIdByUserId(request.user.id)
     startDateTime = datetime.datetime.strptime(str(tripRow[0][1]), "%Y-%m-%d %H:%M:%S")
     endDateTime = datetime.datetime.strptime(str(tripRow[0][2]), "%Y-%m-%d %H:%M:%S")
 
@@ -2420,34 +2431,6 @@ def editTripOfJob(request):
                 print toAdd
 
                 return HttpResponseRedirect('/customer/viewJobs/j_id=' + str(jobId))
-            else:
-                startDate = str(tripRow[0][1]).split(" ")[0]
-                year, month, day = startDate.split("-")
-                startDate = day+"-"+month+"-"+year
-                startTime = str(tripRow[0][1]).split(" ")[1][:5]
-                EndDate = str(tripRow[0][2]).split(" ")[0]
-                year, month, day = EndDate.split("-")
-                EndDate = day+"-"+month+"-"+year
-                EndTime = str(tripRow[0][2]).split(" ")[1][:5]
-                startLocation = tripRow[0][3]
-                endLocation = tripRow[0][4]
-                comments = tripRow[0][5]
-                roundTrip = tripReqResources[0][1]
-                if roundTrip == 'y':
-                    roundTrip = 'YES'
-                elif roundTrip == 'n':
-                    roundTrip = 'NO'
-
-                form = TripForm(request, initial={
-                    'startDate': startDate,
-                    'startTime': startTime,
-                    'endDate': EndDate,
-                    'endTime': EndTime,
-                    'startLocation': startLocation,
-                    'endLocation': endLocation,
-                    'comments': comments,
-                    'roundTrip': roundTrip,
-                })
     else:
         startDate = str(tripRow[0][1]).split(" ")[0]
         year, month, day = startDate.split("-")
@@ -2500,72 +2483,108 @@ def editTripOfJob(request):
         'fiveTonAmt': noOfFiveTonLorry,
     }, context_instance=RequestContext(request))
 
-
-def searchCompany(request):
+@csrf_exempt
+def searchCompanyByLocation(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
-        form = companySearchForm(request.POST)
+        form = searchCompanyByLocationForm(request.POST)
         if form.is_valid():
             coyNameArray = request.POST['coyName'].split(",")
             streetNameArray = request.POST['streetName'].split(",")
+            for index, item in enumerate(coyNameArray):
+                coyNameArray[index] = "%%"+item.lower()+"%%"
+            for index, item in enumerate(streetNameArray):
+                streetNameArray[index] = "%%"+item.lower()+"%%"
+            print coyNameArray
+            print streetNameArray
             companyResult = dbaccess.searchCompanies(coyNameArray, streetNameArray)
             companyResultArray = dictfetchall(companyResult)
 
             request.session['companyResultArray'] = companyResultArray
-            return HttpResponseRedirect('/customer/searchCompanyResults')
+            return HttpResponseRedirect('/customer/searchCompanyByLocationResults')
     else:
-        form = companySearchForm()
+        form = searchCompanyByLocationForm()
 
-    return render_to_response('customer/searchCompany.html', {
+    return render_to_response('customer/searchCompanyByLocation.html', {
         'form': form
     }, context_instance=RequestContext(request))
 
-
-def searchCompanyResults(request):
-    return render_to_response('customer/searchCompanyResults.html', {
+@csrf_exempt
+def searchCompanyByLocationResults(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
+    return render_to_response('customer/searchCompanyByLocationResults.html', {
     }, context_instance=RequestContext(request))
 
-
-def searchVehicle(request):
+@csrf_exempt
+def searchCompanyByVehicle(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
     if request.method == 'POST':
-        form = companySearchForm(request.POST)
+        form = searchCompanyByVehicleForm(request.POST)
         if form.is_valid():
+            vehicleChoice = request.POST['vehicleChoice']
+            vehicleAmount = request.POST['vehicleAmount']
+            companyByVehicleResultArray = []
+            if vehicleChoice == "sedan" or vehicleChoice == "mpv" or vehicleChoice == "luxury":
+                params = [vehicleChoice, int(vehicleAmount)]
+                companyByVehicleResult = dbaccess.getCompanyByCarCount(params)
+                companyByVehicleResultArray = dictfetchall(companyByVehicleResult)
+            elif vehicleChoice == "bus" or vehicleChoice == "mini" or vehicleChoice == "coach":
+                params = [vehicleChoice, int(vehicleAmount)]
+                companyByVehicleResult = dbaccess.getCompanyByBusCount(params)
+                companyByVehicleResultArray = dictfetchall(companyByVehicleResult)
+            elif int(vehicleChoice) == 1 or int(vehicleChoice) == 3 or int(vehicleChoice) == 5:
+                params = [int(vehicleChoice), int(vehicleAmount)]
+                companyByVehicleResult = dbaccess.getCompanyByLorryCount(params)
+                companyByVehicleResultArray = dictfetchall(companyByVehicleResult)
 
-            coyNames = request.POST['coyName']
-            streetNames = request.POST['streetName']
-            coyNameArray = coyNames.split(",")
-            streetNameArray = streetNames.split(",")
-            cursor = connection.cursor()
-            query = "SELECT * FROM company WHERE "
-
-            if coyNameArray:
-                query = query + "(coyName LIKE "
-                for x in coyNameArray:
-                    query = query + "'%s' OR coyName LIKE " % (x)
-
-                query = query[:-18] + "') AND "
-
-            if streetNameArray:
-                query = query + "(streetName LIKE "
-                for x in streetNameArray:
-                    query = query + "'%s' OR streetName LIKE " % (x)
-
-                query = query[:-21] + "') AND "
-            query = query[:-5]
-            print query
-            companyResult = cursor.execute(query)
-            companyResultArray = dictfetchall(companyResult)
-            #print companyResultArray
-
-            request.session['companyResultArray'] = companyResultArray
-            return HttpResponseRedirect('/customer/searchVehicleResults')
+            request.session['companyByVehicleResultArray'] = companyByVehicleResultArray
+            return HttpResponseRedirect('/customer/searchCompanyByVehicleResults')
     else:
-        form = companySearchForm()
+        form = searchCompanyByVehicleForm()
 
-    return render_to_response('customer/searchVehicle.html', {
+    return render_to_response('customer/searchCompanyByVehicle.html', {
         'form': form
     }, context_instance=RequestContext(request))
 
+@csrf_exempt
+def searchCompanyByVehicleResults(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
+    return render_to_response('customer/searchCompanyByVehicleResults.html', {
+    }, context_instance=RequestContext(request))
 
-def searchVehicleResults(request):
-    return render_to_response('customer/searchVehicleResults.html', {
+@csrf_exempt
+def searchCompanyByVehicleAmt(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
+    if request.method == 'POST':
+        form = searchCompanyByVehicleAmtForm(request.POST)
+        if form.is_valid():
+            carChoice = request.POST['carChoice']
+            busChoice = request.POST['busChoice']
+            lorryChoice = request.POST['lorryChoice']
+
+            if carChoice == "None" and busChoice == "None" and int(lorryChoice) == 10:
+                form = searchCompanyByVehicleAmtForm()
+            else:
+                companyByVehicleAmtResult = dbaccess.getCompanyByVehicleTypes(carChoice, busChoice, lorryChoice)
+                companyByVehicleAmtResultArray = dictfetchall(companyByVehicleAmtResult)
+
+                request.session['companyByVehicleAmtResultArray'] = companyByVehicleAmtResultArray
+                return HttpResponseRedirect('/customer/searchCompanyByVehicleAmtResults')
+    else:
+        form = searchCompanyByVehicleAmtForm()
+
+    return render_to_response('customer/searchCompanyByVehicleAmt.html', {
+        'form': form
+    }, context_instance=RequestContext(request))
+
+@csrf_exempt
+def searchCompanyByVehicleAmtResults(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/home')
+    return render_to_response('customer/searchCompanyByVehicleAmtResults.html', {
     }, context_instance=RequestContext(request))

@@ -150,16 +150,34 @@ class TripForm(ModelForm):
             changedEndDateTimeString = str(endDate)+" "+str(endTime)+":00"
             changedStartDateTime = datetime.datetime.strptime(changedStartDateTimeString, "%Y-%m-%d %H:%M:%S")
             changedEndDateTime = datetime.datetime.strptime(changedEndDateTimeString, "%Y-%m-%d %H:%M:%S")
-            if changedEndDateTime < changedStartDateTime:
+            if changedEndDateTime <= changedStartDateTime:
                 msg = "End Date should be later than Start Date"
                 self._errors["endDate"] = self.error_class([msg])
+
+        sedanAmt = self.cleaned_data.get('sedanAmt')
+        mpvAmt = self.cleaned_data.get('mpvAmt')
+        luxuryAmt = self.cleaned_data.get('luxuryAmt')
+        busAmt = self.cleaned_data.get('busAmt')
+        miniAmt = self.cleaned_data.get('miniAmt')
+        coachAmt = self.cleaned_data.get('coachAmt')
+        oneTonAmt = self.cleaned_data.get('oneTonAmt')
+        threeTonAmt = self.cleaned_data.get('threeTonAmt')
+        fiveTonAmt = self.cleaned_data.get('fiveTonAmt')
+        if int(sedanAmt)+int(mpvAmt)+int(luxuryAmt)+int(busAmt)+int(miniAmt)+int(coachAmt)+int(oneTonAmt)+int(threeTonAmt)+int(fiveTonAmt) == 0:
+            msg = "Please select at least 1 vehicle"
+            self._errors["sedanAmt"] = self.error_class([msg])
+            self._errors["mpvAmt"] = self.error_class([msg])
+            self._errors["luxuryAmt"] = self.error_class([msg])
+            self._errors["busAmt"] = self.error_class([msg])
+            self._errors["miniAmt"] = self.error_class([msg])
+            self._errors["coachAmt"] = self.error_class([msg])
+            self._errors["oneTonAmt"] = self.error_class([msg])
+            self._errors["threeTonAmt"] = self.error_class([msg])
+            self._errors["fiveTonAmt"] = self.error_class([msg])
         return cleaned_data
 
 
-
-
-
-class companySearchForm(ModelForm):
+class searchCompanyByLocationForm(ModelForm):
     coyName = forms.CharField(max_length=256, label="Company Name:", validators=[validateDelimitComma])
     streetName = forms.CharField(max_length=256, label="Street Name:", validators=[validateDelimitComma])
 
@@ -168,10 +186,47 @@ class companySearchForm(ModelForm):
         exclude = ['coyId', 'email', 'faxNo', 'coyContactNo', 'zipcode', 'rating']
 
 
-class vehicleSearchForm(ModelForm):
-    coyName = forms.CharField(max_length=256, label="Company Name:", validators=[validateDelimitComma])
-    streetName = forms.CharField(max_length=256, label="Street Name:", validators=[validateDelimitComma])
+class searchCompanyByVehicleForm(forms.Form):
+    VEHICLE_TYPE_SELECTION = (
+        ('sedan', 'Sedan Cars'),
+        ('mpv', 'Mpv Cars'),
+        ('luxury', 'Luxury Cars'),
+        ('bus', 'Regular Bus'),
+        ('mini', 'Mini Bus'),
+        ('coach', 'Coach Bus'),
+        (1, '1-ton Lorry'),
+        (3, '3-ton Lorry'),
+        (5, '5-ton Lorry')
+    )
+    vehicleChoice = forms.ChoiceField(choices=VEHICLE_TYPE_SELECTION, label="Vehicle Type")
+    vehicleAmount = forms.IntegerField(label="At least")
 
-    class Meta:
-        model = adminModel.Company
-        exclude = ['coyId', 'email', 'faxNo', 'coyContactNo', 'zipcode', 'rating']
+
+class searchCompanyByVehicleAmtForm(forms.Form):
+    CAR_TYPE_SELECTION = (
+        ('sedan', 'Sedan Cars'),
+        ('mpv', 'Mpv Cars'),
+        ('luxury', 'Luxury Cars'),
+        ('None', 'None of the above'),
+        ('All', 'All of the above')
+    )
+
+    BUS_TYPE_SELECTION = (
+        ('bus', 'Regular Bus'),
+        ('mini', 'Mini Bus'),
+        ('coach', 'Coach Bus'),
+        ('None', 'None of the above'),
+        ('All', 'All of the above')
+    )
+
+    LORRY_TYPE_SELECTION = (
+        (1, '1-ton Lorry'),
+        (3, '3-ton Lorry'),
+        (5, '5-ton Lorry'),
+        (10, 'None of the above'),
+        (0, 'All of the above')
+    )
+
+    carChoice = forms.ChoiceField(choices=CAR_TYPE_SELECTION, label="Car Type", initial='None')
+    busChoice = forms.ChoiceField(choices=BUS_TYPE_SELECTION, label="Bus Type", initial='None')
+    lorryChoice = forms.ChoiceField(choices=LORRY_TYPE_SELECTION, label="Lorry Type", initial=10)

@@ -8,8 +8,10 @@ urlpatterns = patterns('customer.views',
     (r'^viewJobs/j_id=\d+?$', 'viewTripsOfJob'),
     (r'^viewTrip/d_id=\d+?$', 'deleteTripOfJob'),
     (r'^viewTrip/e_id=\d+?$', 'editTripOfJob'),
-    (r'^searchCompany$', 'searchCompany'),
-    (r'^searchCompanyResults$', 'searchCompanyResults'),
-    (r'^searchVehicle$', 'searchVehicle'),
-    (r'^searchVehicleResults$', 'searchVehicleResults')
+    (r'^searchCompanyByLocation$', 'searchCompanyByLocation'),
+    (r'^searchCompanyByLocationResults$', 'searchCompanyByLocationResults'),
+    (r'^searchCompanyByVehicle$', 'searchCompanyByVehicle'),
+    (r'^searchCompanyByVehicleResults$', 'searchCompanyByVehicleResults'),
+    (r'^searchCompanyByVehicleAmt$', 'searchCompanyByVehicleAmt'),
+    (r'^searchCompanyByVehicleAmtResults$', 'searchCompanyByVehicleAmtResults')
 )

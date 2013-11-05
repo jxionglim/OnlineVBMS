@@ -46,16 +46,16 @@ def searchCompanies(coyNameArray, streetNameArray):
     query = "SELECT * FROM company WHERE "
 
     if coyNameArray:
-        query += "(coyName LIKE "
+        query += "(LOWER(coyName) LIKE "
         for x in coyNameArray:
-            query += "'%s' OR coyName LIKE " % (x)
-        query = query[:-18] + "') AND "
+            query += "'%s' OR LOWER(coyName) LIKE " % (x)
+        query = query[:-25] + "') AND "
 
     if streetNameArray:
-        query += "(streetName LIKE "
+        query += "(LOWER(streetName) LIKE "
         for x in streetNameArray:
-            query += "'%s' OR streetName LIKE " % (x)
-        query = query[:-21] + "') AND "
+            query += "'%s' OR LOWER(streetName) LIKE " % (x)
+        query = query[:-28] + "') AND "
 
     query = query[:-5]
     companyResult = cursor.execute(query)
@@ -251,7 +251,7 @@ def deleteJob(id):
 
 def getNoOfCarsByCarplateNos(params):
     cursor = connection.cursor()
-    query = "SELECT COUNT(*) FROM car WHERE category=%s AND carplateNo IN (SELECT carplateNo FROM reqResource WHERE tripId=%s)"
+    query = "SELECT COUNT(*) FROM car WHERE category=%s AND carplateNo = ANY (SELECT carplateNo FROM reqResource WHERE tripId=%s)"
     cursor.execute(query, params)
     row = cursor.fetchone()
     return row[0] if row[0] is not None else 0
@@ -259,7 +259,7 @@ def getNoOfCarsByCarplateNos(params):
 
 def getNoOfBusesByCarplateNos(params):
     cursor = connection.cursor()
-    query = "SELECT COUNT(*) FROM bus WHERE category=%s AND carplateNo IN (SELECT carplateNo FROM reqResource WHERE tripId=%s)"
+    query = "SELECT COUNT(*) FROM bus WHERE category=%s AND carplateNo = ANY (SELECT carplateNo FROM reqResource WHERE tripId=%s)"
     cursor.execute(query, params)
     row = cursor.fetchone()
     return row[0] if row[0] is not None else 0
@@ -267,7 +267,7 @@ def getNoOfBusesByCarplateNos(params):
 
 def getNoOfLorriesByCarplateNos(params):
     cursor = connection.cursor()
-    query = "SELECT COUNT(*) FROM lorry WHERE tons=%s AND carplateNo IN (SELECT carplateNo FROM reqResource WHERE tripId=%s)"
+    query = "SELECT COUNT(*) FROM lorry WHERE tons=%s AND carplateNo = ANY (SELECT carplateNo FROM reqResource WHERE tripId=%s)"
     cursor.execute(query, params)
     row = cursor.fetchone()
     return row[0] if row[0] is not None else 0
@@ -326,5 +326,90 @@ def getListOfLorriesByTonsAndTripIdByDrivingClass(params):
             "ORDER BY v.drivingClass ASC"
     cursor.execute(query, params)
     return cursor.fetchall()
+
+
+def getCompanyByCarCount(params):
+    cursor = connection.cursor()
+    query = "SELECT co.coyId, co.coyName " \
+            "FROM company co " \
+            "WHERE co.coyID IN " \
+            "(SELECT DISTINCT(co.coyId) " \
+            "FROM company co, vehicle v, car c " \
+            "WHERE co.coyId = v.coyId " \
+            "AND v.carplateNo = c.carplateNo " \
+            "AND c.category = %s " \
+            "GROUP BY co.coyId " \
+            "HAVING COUNT(c.carplateNo) > %s)"
+    companyResult = cursor.execute(query, params)
+    return companyResult
+
+
+def getCompanyByBusCount(params):
+    cursor = connection.cursor()
+    query = "SELECT co.coyId, co.coyName " \
+            "FROM company co " \
+            "WHERE co.coyID IN " \
+            "(SELECT DISTINCT(co.coyId) " \
+            "FROM company co, vehicle v, bus b " \
+            "WHERE co.coyId = v.coyId " \
+            "AND v.carplateNo = b.carplateNo " \
+            "AND b.category = %s " \
+            "GROUP BY co.coyId " \
+            "HAVING COUNT(b.carplateNo) > %s)"
+    companyResult = cursor.execute(query, params)
+    return companyResult
+
+
+def getCompanyByLorryCount(params):
+    cursor = connection.cursor()
+    query = "SELECT co.coyId, co.coyName " \
+            "FROM company co " \
+            "WHERE co.coyID IN " \
+            "(SELECT DISTINCT(co.coyId) " \
+            "FROM company co, vehicle v, lorry l " \
+            "WHERE co.coyId = v.coyId " \
+            "AND v.carplateNo = l.carplateNo " \
+            "AND l.tons = %s " \
+            "GROUP BY co.coyId " \
+            "HAVING COUNT(l.carplateNo) > %s)"
+    companyResult = cursor.execute(query, params)
+    return companyResult
+
+
+def getCompanyByVehicleTypes(carChoice, busChoice, lorryChoice):
+    cursor = connection.cursor()
+    query = "SELECT co.coyId, co.coyName FROM company co WHERE co.coyID IN ("
+    if carChoice == "sedan":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, car c WHERE co.coyId = v.coyId AND v.carplateNo = c.carplateNo AND c.category = 'sedan' GROUP BY co.coyId HAVING count(c.carplateNo) > 0 INTERSECT "
+    elif carChoice == "mpv":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, car c WHERE co.coyId = v.coyId AND v.carplateNo = c.carplateNo AND c.category = 'mpv' GROUP BY co.coyId HAVING count(c.carplateNo) > 0 INTERSECT "
+    elif carChoice == "luxury":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, car c WHERE co.coyId = v.coyId AND v.carplateNo = c.carplateNo AND c.category = 'luxury' GROUP BY co.coyId HAVING count(c.carplateNo) > 0 INTERSECT "
+    elif carChoice == "All":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, car c WHERE co.coyId = v.coyId AND v.carplateNo = c.carplateNo AND c.category = 'sedan' GROUP BY co.coyId HAVING count(c.carplateNo) > 0 INTERSECT SELECT DISTINCT(co.coyId) FROM company co, vehicle v, car c WHERE co.coyId = v.coyId AND v.carplateNo = c.carplateNo AND c.category = 'mpv' GROUP BY co.coyId HAVING count(c.carplateNo) > 0 INTERSECT SELECT DISTINCT(co.coyId) FROM company co, vehicle v, car c WHERE co.coyId = v.coyId AND v.carplateNo = c.carplateNo AND c.category = 'luxury' GROUP BY co.coyId HAVING count(c.carplateNo) > 0 INTERSECT "
+
+    if busChoice == "bus":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, bus b WHERE co.coyId = v.coyId AND v.carplateNo = b.carplateNo AND b.category = 'bus' GROUP BY co.coyId HAVING count(b.carplateNo) > 0 INTERSECT "
+    elif busChoice == "mini":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, bus b WHERE co.coyId = v.coyId AND v.carplateNo = b.carplateNo AND b.category = 'mini' GROUP BY co.coyId HAVING count(b.carplateNo) > 0 INTERSECT "
+    elif busChoice == "coach":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, bus b WHERE co.coyId = v.coyId AND v.carplateNo = b.carplateNo AND b.category = 'coach' GROUP BY co.coyId HAVING count(b.carplateNo) > 0 INTERSECT "
+    elif busChoice == "All":
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, bus b WHERE co.coyId = v.coyId AND v.carplateNo = b.carplateNo AND b.category = 'bus' GROUP BY co.coyId HAVING count(b.carplateNo) > 0 INTERSECT SELECT DISTINCT(co.coyId) FROM company co, vehicle v, bus b WHERE co.coyId = v.coyId AND v.carplateNo = b.carplateNo AND b.category = 'mini' GROUP BY co.coyId HAVING count(b.carplateNo) > 0 INTERSECT SELECT DISTINCT(co.coyId) FROM company co, vehicle v, bus b WHERE co.coyId = v.coyId AND v.carplateNo = b.carplateNo AND b.category = 'coach' GROUP BY co.coyId HAVING count(b.carplateNo) > 0 INTERSECT "
+
+    if int(lorryChoice) == 1:
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, lorry l WHERE co.coyId = v.coyId AND v.carplateNo = l.carplateNo AND l.tons = 1 GROUP BY co.coyId HAVING count(l.carplateNo) > 0 INTERSECT "
+    elif int(lorryChoice) == 3:
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, lorry l WHERE co.coyId = v.coyId AND v.carplateNo = l.carplateNo AND l.tons = 3 GROUP BY co.coyId HAVING count(l.carplateNo) > 0 INTERSECT "
+    elif int(lorryChoice) == 5:
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, lorry l WHERE co.coyId = v.coyId AND v.carplateNo = l.carplateNo AND l.tons = 5 GROUP BY co.coyId HAVING count(l.carplateNo) > 0 INTERSECT "
+    elif int(lorryChoice) == 0:
+        query += "SELECT DISTINCT(co.coyId) FROM company co, vehicle v, lorry l WHERE co.coyId = v.coyId AND v.carplateNo = l.carplateNo AND l.tons = 1 GROUP BY co.coyId HAVING count(l.carplateNo) > 0 INTERSECT SELECT DISTINCT(co.coyId) FROM company co, vehicle v, lorry l WHERE co.coyId = v.coyId AND v.carplateNo = l.carplateNo AND l.tons = 3 GROUP BY co.coyId HAVING count(l.carplateNo) > 0 INTERSECT SELECT DISTINCT(co.coyId) FROM company co, vehicle v, lorry l WHERE co.coyId = v.coyId AND v.carplateNo = l.carplateNo AND l.tons = 5 GROUP BY co.coyId HAVING count(l.carplateNo) > 0 INTERSECT "
+
+    query = query[:-11]
+    query += ")"
+    print query
+    companyResult = cursor.execute(query)
+    return companyResult
 
 
