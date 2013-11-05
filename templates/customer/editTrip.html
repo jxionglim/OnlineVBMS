@@ -53,7 +53,7 @@
                     {% if overallSuccess == True %}
                         <script>alert("Adding of Trip is successful")</script>
                     {% endif %}
-                    <form class="form-horizontal" action="addTrip" method="post">
+                    <form class="form-horizontal" action="e_id={{ tripId }}&&c_id={{ cusId }}" method="post">
                         {% for fields in form %}
                             <div class="control-group">
                                 <label class="control-label span3">{{ fields.label }}</label>
