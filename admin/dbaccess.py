@@ -247,7 +247,7 @@ def getNumVehByCatByCoy(id):
 def checkIfCompanyHaveTrips(id):
     now = datetime.datetime.now()
     cursor = connection.cursor()
-    query = "SELECT * FROM COMPANY c WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE c.coyId=r.coyId AND t.tripId=r.tripId AND %s > t.endTime and c.coyId=%s)"
+    query = "SELECT * FROM COMPANY c WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE c.coyId=r.coyId AND t.tripId=r.tripId AND %s < t.endTime and c.coyId=%s)"
     cursor.execute(query,[now,id])
     row = cursor.fetchone()
     return False if row is not None else True
@@ -256,16 +256,34 @@ def checkIfCompanyHaveTrips(id):
 def checkIfDriverHaveTrips(id):
     now = datetime.datetime.now()
     cursor = connection.cursor()
-    query = "SELECT * FROM DRIVER d WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE d.driverId=r.driverId AND t.tripId=r.tripId AND %s > t.endTime and d.driverId=%s)"
+    query = "SELECT * FROM DRIVER d WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE d.driverId=r.driverId AND t.tripId=r.tripId AND %s < t.endTime and d.driverId=%s)"
     cursor.execute(query,[now,id])
     row = cursor.fetchone()
     return False if row is not None else True
 
 
+def checkIfAnyDriverHaveTrips(id):
+    now = datetime.datetime.now()
+    cursor = connection.cursor()
+    query = "SELECT d.driverId FROM DRIVER d WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t, COMPANY c WHERE c.coyId=r.coyId AND d.driverId=r.driverId AND t.tripId=r.tripId AND %s < t.endTime and c.coyId=%s)"
+    cursor.execute(query,[now,id])
+    rows = cursor.fetchall()
+    return rows
+
+
 def checkIfVehicleHaveTrips(carplateNo):
     now = datetime.datetime.now()
     cursor = connection.cursor()
-    query = "SELECT * FROM VEHICLE v WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE v.carplateNo=r.carplateNo AND t.tripId=r.tripId AND %s > t.endTime and v.carplateNo=%s)"
+    query = "SELECT * FROM VEHICLE v WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t WHERE v.carplateNo=r.carplateNo AND t.tripId=r.tripId AND %s < t.endTime and v.carplateNo=%s)"
     cursor.execute(query,[now,carplateNo])
     row = cursor.fetchone()
     return False if row is not None else True
+
+
+def checkIfAnyVehicleHaveTrips(id):
+    now = datetime.datetime.now()
+    cursor = connection.cursor()
+    query = "SELECT v.carplateNo FROM VEHICLE v WHERE EXISTS (SELECT * FROM REQRESOURCE r, TRIP t, COMPANY c WHERE c.coyId=r.coyId AND v.carplateNo=r.carplateNo AND t.tripId=r.tripId AND %s < t.endTime AND c.coyId=%s)"
+    cursor.execute(query,[now,id])
+    rows = cursor.fetchall()
+    return rows

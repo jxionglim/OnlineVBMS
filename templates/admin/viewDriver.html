@@ -61,6 +61,7 @@
                                 <td style="text-align: center">Last Name</td>
                                 <td style="text-align: center">Contact Number</td>
                                 <td style="text-align: center">Driving Class</td>
+                                <td style="text-align: center">Availability</td>
                                 <td style="text-align: center">Action</td>
                             </tr>
                             </thead>
@@ -71,6 +72,7 @@
                                     <td style="text-align: center">{{ driver.2 }}</td>
                                     <td style="text-align: center">{{ driver.3 }}</td>
                                     <td style="text-align: center">{{ driver.4 }}</td>
+                                    <td style="text-align: center">{{ driver.5 }}</td>
                                     <td style="text-align: center"><input type="image" src="/static/images/edit-icon.png" onclick="window.location='/admin/editDriver/d_id={{ driver.0 }}';">&nbsp&nbsp<input type="image" src="/static/images/delete-icon.png" onclick="window.location='/admin/deleteDriver/d_id={{ driver.0 }}';"></td>
                                 </tr>
                             {% endfor %}
