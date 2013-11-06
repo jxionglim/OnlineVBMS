@@ -2,7 +2,7 @@ import dbaccess, urlparse
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm
+from admin.models import AddCompanyForm, AddDriverForm, AddVehicleForm, EditCompanyForm
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.datastructures import SortedDict
 
@@ -177,16 +177,17 @@ def viewCompanyProfile(request):
     no4 = 0
     no4a = 0
     no5 = 0
+
     for driver in drivers:
         if driver[0] == '3':
             no3 = driver[1]
-        elif driver[0] == '3a':
+        if driver[0] == '3a':
             no3a = driver[1]
-        elif driver[0] == '4':
+        if driver[0] == '4':
             no4 = driver[1]
-        elif driver[1] == '4a':
+        if driver[0] == '4a':
             no4a = driver[1]
-        elif driver[1] == '5':
+        if driver[0] == '5':
             no5 = driver[1]
 
     driverDetails = SortedDict([
@@ -364,11 +365,11 @@ def editCompany(request):
         return HttpResponseRedirect('/home')
     coyRow = dbaccess.getCompanyById(request.get_full_path().split('=')[1])
     if request.method == 'POST':
-        form = AddCompanyForm(request.POST)
+        form = EditCompanyForm(request.POST)
         if form.is_valid():
             params = [
                 request.POST['coyName'],
-                request.POST['email'],
+                coyRow[2],
                 request.POST['faxNo'],
                 request.POST['coyContactNo'],
                 request.POST['zipcode'],
@@ -378,7 +379,7 @@ def editCompany(request):
             dbaccess.updateCompany(params)
             return HttpResponseRedirect('/admin/viewCompany')
     else:
-        form = AddCompanyForm(initial={
+        form = EditCompanyForm(initial={
             'coyName': coyRow[1],
             'email': coyRow[2],
             'faxNo': coyRow[3],
@@ -388,6 +389,7 @@ def editCompany(request):
         })
     return render_to_response('admin/editCompany.html', {
         'form': form,
+        'email': coyRow[2],
     }, context_instance=RequestContext(request))
 
 @csrf_exempt

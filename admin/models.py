@@ -114,6 +114,49 @@ class AddCompanyForm(ModelForm):
                 raise forms.ValidationError("Postal code must be a 6 digit number")
         return zipcode
 
+
+class EditCompanyForm(ModelForm):
+    coyName = forms.CharField(max_length=256, label="Company Name", validators=[validateBlank])
+    email = forms.EmailField(max_length=256, label="Email", widget=forms.TextInput(attrs={"class": 'uneditable-input'}), required=False)
+    coyContactNo = forms.IntegerField(label="Contact Number")
+    faxNo = forms.IntegerField(label="Fax Number")
+    streetName = forms.CharField(max_length=256, label="Street Name")
+    zipcode = forms.IntegerField(label="Postal Code")
+
+    class Meta:
+        model = Company
+        exclude = ['coyId', 'rating']
+
+    def __init__(self, *args, **kw):
+        super(ModelForm, self).__init__(*args, **kw)
+        self.fields.keyOrder = [
+            'coyName',
+            'email',
+            'streetName',
+            'zipcode',
+            'coyContactNo',
+            'faxNo']
+
+    def clean_coyContactNo(self):
+        coyContactNo = self.cleaned_data.get('coyContactNo', '')
+        if re.search('^(9|8|6)\d{7}$',str(coyContactNo)) == None:
+            raise forms.ValidationError("Contact number must be a 8 digit number starting with 8 or 9")
+        return coyContactNo
+
+    def clean_faxNo(self):
+        faxNo = self.cleaned_data.get('faxNo', '')
+        if re.search('^(6)\d{7}$',str(faxNo)) == None:
+            raise forms.ValidationError("Fax number must be a 8 digit number starting with 6")
+        return faxNo
+
+    def clean_zipcode(self):
+        zipcode = self.cleaned_data.get('zipcode', '')
+        if zipcode is not None:
+            if re.search('^\d{6}$',str(zipcode)) == None:
+                raise forms.ValidationError("Postal code must be a 6 digit number")
+        return zipcode
+
+
 class AddDriverForm(ModelForm):
     firstName = forms.CharField(max_length=256, label="First Name", validators=[validateBlank])
     lastName = forms.CharField(max_length=256, label="Last Name", validators=[validateBlank])
