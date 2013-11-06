@@ -361,6 +361,7 @@ def viewJobs(request):
 
 @csrf_exempt
 def editCompany(request):
+    print 'asd'
     if not request.user.is_superuser:
         return HttpResponseRedirect('/home')
     coyRow = dbaccess.getCompanyById(request.get_full_path().split('=')[1])
