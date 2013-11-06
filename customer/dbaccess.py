@@ -402,7 +402,7 @@ def getCompanyByCarCount(params):
             "AND v.carplateNo = c.carplateNo " \
             "AND c.category = %s " \
             "GROUP BY co.coyId " \
-            "HAVING COUNT(c.carplateNo) > %s)"
+            "HAVING COUNT(c.carplateNo) >= %s)"
     companyResult = cursor.execute(query, params)
     return companyResult
 
@@ -418,7 +418,7 @@ def getCompanyByBusCount(params):
             "AND v.carplateNo = b.carplateNo " \
             "AND b.category = %s " \
             "GROUP BY co.coyId " \
-            "HAVING COUNT(b.carplateNo) > %s)"
+            "HAVING COUNT(b.carplateNo) >= %s)"
     companyResult = cursor.execute(query, params)
     return companyResult
 
@@ -434,7 +434,7 @@ def getCompanyByLorryCount(params):
             "AND v.carplateNo = l.carplateNo " \
             "AND l.tons = %s " \
             "GROUP BY co.coyId " \
-            "HAVING COUNT(l.carplateNo) > %s)"
+            "HAVING COUNT(l.carplateNo) >= %s)"
     companyResult = cursor.execute(query, params)
     return companyResult
 

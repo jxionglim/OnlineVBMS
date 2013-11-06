@@ -67,9 +67,13 @@ class reqResources(models.Model):
 
 
 class JobForm(forms.Form):
-    companies = dbaccess.getCompanyNames()
-    COMPANY_CHOICES = [(x[0], x[0]) for x in companies]
-    coyId = forms.ChoiceField(label="Company Name", choices=COMPANY_CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
+    coyId = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        companies = dbaccess.getCompanyNames()
+        COMPANY_CHOICES = [(x[0], x[0]) for x in companies]
+        super(JobForm, self).__init__(*args, **kwargs)
+        self.fields['coyId'] = forms.ChoiceField(label="Company Name", choices=COMPANY_CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
 
 
 class TripForm(ModelForm):
@@ -184,6 +188,12 @@ class searchCompanyByVehicleForm(forms.Form):
     )
     vehicleChoice = forms.ChoiceField(choices=VEHICLE_TYPE_SELECTION, label="Vehicle Type")
     vehicleAmount = forms.IntegerField(label="At least")
+
+    def clean_vehicleAmount(self):
+        vehicleAmount = self.cleaned_data.get('vehicleAmount', '')
+        if vehicleAmount <= 0:
+            raise forms.ValidationError("Enter a value > 0")
+        return vehicleAmount
 
 
 class searchCompanyByVehicleAmtForm(forms.Form):
