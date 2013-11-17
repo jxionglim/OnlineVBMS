@@ -139,7 +139,7 @@ def getJobAmtByCoy(order, qty, period):
 
     if deductPeriod is None:
         query = "SELECT company.coyId, company.coyName, A.countJob, (A.countJob/B.totalJob)*100, A.total, (A.total/B.totalSum)*100 " \
-                "FROM (SELECT c.coyId, count(j.jobId) AS countJob, SUM(amount) AS total " \
+                "FROM (SELECT j.coyId, count(j.jobId) AS countJob, SUM(amount) AS total " \
                     "FROM job j, company c " \
                     "WHERE j.coyId = c.coyId " \
                     "GROUP BY j.coyId) A, " \
@@ -150,7 +150,7 @@ def getJobAmtByCoy(order, qty, period):
         cursor.execute(query)
     else:
         query = "SELECT company.coyId, company.coyName, A.countJob, (A.countJob/B.totalJob)*100, A.total, (A.total/B.totalSum)*100 " \
-                "FROM (SELECT c.coyId, count(j.jobId) AS countJob, SUM(amount) AS total " \
+                "FROM (SELECT j.coyId, count(j.jobId) AS countJob, SUM(amount) AS total " \
                     "FROM job j, company c " \
                     "WHERE j.coyId = c.coyId " \
                     "AND j.dateCreated >= TO_DATE(%s,'YYYY-MM-DD HH24:MI:SS') " \
