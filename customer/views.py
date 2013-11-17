@@ -2578,7 +2578,7 @@ def editTripOfJob(request):
 @csrf_exempt
 def searchCompanyByLocation(request):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/home')
+        return HttpResponseRedirect('/')
     if request.method == 'POST':
         form = searchCompanyByLocationForm(request.POST)
         if form.is_valid():

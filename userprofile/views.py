@@ -8,15 +8,6 @@ from django.contrib.auth import logout as auth_logout
 from django.utils.datastructures import SortedDict
 
 
-def home(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/')
-    form = None
-    return render_to_response('userprofile/home.html', {
-        'form': form
-    }, context_instance=RequestContext(request))
-
-
 def addAdmin(request):
     if not request.user.is_authenticated() or not request.user.is_superuser:
         return HttpResponseRedirect('/home')
